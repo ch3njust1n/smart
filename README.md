@@ -4,3 +4,9 @@ Metaprogramming with safe code injection from [generative APIs](https://github.c
 # Setup instructions
 1. Create `.env` for your environment variables
 2. Add your API key
+
+To run unit tests
+
+```bash
+pytest -s
+```
