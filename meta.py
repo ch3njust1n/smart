@@ -37,7 +37,7 @@ def adapt(code: str, use_llm: bool = False) -> Callable:
 
         except (TypeError, OSError):
             # Handle the error if the source code could not be retrieved
-            print("Could not retrieve the source code of the function.")
+            code = ""
 
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             if code == "":
