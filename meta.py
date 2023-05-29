@@ -16,7 +16,9 @@ import inspect
 from typing import Callable, Any, Optional
 
 import openai
+
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
 
 def adapt(code: str, use_llm: bool = False) -> Callable:
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -32,7 +34,7 @@ def adapt(code: str, use_llm: bool = False) -> Callable:
                     temperature=os.getenv("TEMPERATURE"),
                 )
                 code = llm_code.choices[0].text
-            
+
         except (TypeError, OSError):
             # Handle the error if the source code could not be retrieved
             print("Could not retrieve the source code of the function.")
@@ -47,7 +49,7 @@ def adapt(code: str, use_llm: bool = False) -> Callable:
                     "kwargs": kwargs,
                     "func_source": func_source,  # make the source code available to the new code
                 }
-                
+
                 # TODO: santize given function using traditional methods and LLM
                 exec(f"result = {code}", local_vars)
                 # TODO: sanitize result
