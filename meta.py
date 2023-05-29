@@ -11,7 +11,7 @@ def adapt(code):
                     'args': args,
                     'kwargs': kwargs,
                 }
-                exec(code, local_vars)
+                exec(f"result = {code}", local_vars)
                 return local_vars.get('result')
         return wrapper
     return decorator

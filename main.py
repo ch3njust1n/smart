@@ -1,8 +1,6 @@
 from meta import adapt
 
-a = """
-result = sum(args)
-"""
+a = "sum(args)"
 
 @adapt(a)
 def add(a, b):
