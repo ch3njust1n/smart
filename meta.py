@@ -9,6 +9,8 @@ Args:
 Returns:
     A function that wraps the original function, replacing its behavior with the provided code.
 """
+
+
 def adapt(code: str) -> Callable:
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         def wrapper(*args: Any, **kwargs: Any) -> Any:
