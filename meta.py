@@ -11,8 +11,20 @@ Returns:
 """
 
 
+import inspect
+from typing import Callable, Any, Optional
+
 def adapt(code: str) -> Callable:
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        func_source: Optional[str] = None
+        try:
+            # Get the source code of the function
+            func_source = inspect.getsource(func)
+            print("\nsource\n"+func_source)
+        except (TypeError, OSError):
+            # Handle the error if the source code could not be retrieved
+            print("Could not retrieve the source code of the function.")
+        
         def wrapper(*args: Any, **kwargs: Any) -> Any:
             if code == "":
                 # If no code is provided, run the decorated function as normal
@@ -21,6 +33,7 @@ def adapt(code: str) -> Callable:
                 local_vars = {
                     "args": args,
                     "kwargs": kwargs,
+                    "func_source": func_source,  # make the source code available to the new code
                 }
                 exec(f"result = {code}", local_vars)
                 return local_vars.get("result")
@@ -28,3 +41,4 @@ def adapt(code: str) -> Callable:
         return wrapper
 
     return decorator
+
