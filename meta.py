@@ -56,10 +56,10 @@ def adapt(code: str = "", llm: Optional[Callable[[str], str]] = None) -> Callabl
 
                 # TODO: sanitize generated code i.e. generative_func
                 func_name = extract_func_name(code)
-                defined_func = global_vars[func_name]
+                generative_func = global_vars[func_name]
 
                 # TODO: sanitize result
-                result = defined_func(*args, **kwargs)
+                result = generative_func(*args, **kwargs)
 
                 return result
 

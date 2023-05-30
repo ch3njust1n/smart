@@ -30,7 +30,7 @@ def test_multiply():
 
 def test_self_healing():
     func = """
-     def fibonacci(n):
+    def fibonacci(n):
         if n == 0:
             return 0
         elif n == 1:
@@ -52,7 +52,6 @@ def test_llm():
 
     for _ in range(retry_count):
         try:
-
             @adapt(llm=llm)
             def func(a, b):
                 prompt = """
