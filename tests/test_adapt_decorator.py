@@ -52,7 +52,7 @@ def test_self_healing():
 def test_llm():
     @adapt(use_llm=True)
     def func(a, b):
-        prompt="""
+        prompt = """
         Write a complete python 3 function, including the header and
         return statement that computes the N-th Fibonacci number.
         """
