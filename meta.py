@@ -12,7 +12,9 @@ Returns:
 """
 
 import os
+import re
 import inspect
+import textwrap
 from dotenv import load_dotenv
 from typing import Callable, Any, Optional
 
@@ -30,39 +32,56 @@ def setup_openai():
 
 
 def adapt(code: str = "", use_llm: bool = False) -> Callable:
+    def extract_func_name(code: str) -> str:
+        match = re.search(r"def\s+(\w+)", code)
+        if match:
+            return match.group(1)
+        else:
+            raise ValueError("No function definition found in provided code.")
+
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         nonlocal code
         func_source: Optional[str] = None
         try:
             # Get the source code of the function
             func_source = inspect.getsource(func)
+
             if use_llm:
                 llm_code = openai.Completion.create(
                     model=os.getenv("MODEL"),
                     prompt=f"source\n{func_source}",
-                    temperature=os.getenv("TEMPERATURE"),
+                    temperature=float(os.getenv("TEMPERATURE")),
+                    max_tokens=int(os.getenv("MAX_TOKENS")),
                 )
                 code = llm_code.choices[0].text
+                print(llm_code)
+                print(f"\nLLM Code:\n{code}\n")
 
         except (TypeError, OSError):
-            # Handle the error if the source code could not be retrieved
             code = ""
 
         def wrapper(*args: Any, **kwargs: Any) -> Any:
-            if code == "":
-                # If no code is provided, run the decorated function as normal
+            nonlocal code
+            if code.strip() == "":
                 return func(*args, **kwargs)
             else:
                 local_vars = {
                     "args": args,
                     "kwargs": kwargs,
-                    "func_source": func_source,  # make the source code available to the new code
+                    "func_source": func_source,
                 }
 
                 # TODO: santize given function using traditional methods and LLM
-                exec(f"result = {code}", local_vars)
+                code = textwrap.dedent(code)
+                exec(code, local_vars)
+
+                # TODO: sanitize generated code i.e. generative_func
+                defined_func = local_vars[extract_func_name(code)]
+
                 # TODO: sanitize result
-                return local_vars.get("result")
+                result = defined_func(*args, **kwargs)
+
+                return result
 
         return wrapper
 

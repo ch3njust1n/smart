@@ -1,10 +1,18 @@
 # Demo code for dynamic metaprogramming decorator
+import pytest
+from meta import adapt, setup_openai
 
-from meta import adapt
+
+@pytest.fixture(autouse=True)
+def setup_global_variable():
+    setup_openai()
 
 
 def test_add():
-    a = "sum(args)"
+    a = """
+    def add(a, b):
+        return sum([a, b])
+    """
 
     @adapt(a)
     def add(a, b):
@@ -21,3 +29,32 @@ def test_multiply():
         return a * b
 
     assert multiply(3, 4) == 12, "Test failed: Expected 12"
+
+
+def test_full_function():
+    func = """
+     def fibonacci(n):
+        if n == 0:
+            return 0
+        elif n == 1:
+            return 1
+        else:
+            return fibonacci(n-1) + fibonacci(n-2)
+    """
+
+    @adapt(func)
+    def broken_fibonacci(n):
+        return n
+
+    assert broken_fibonacci(8) == 21
+
+
+# def test_llm():
+#     @adapt(use_llm=True)
+#     def func(a, b):
+#         prompt="""
+#         Write a complete python 3 function, including the header and
+#         return statement that computes the N-th Fibonacci number.
+#         """
+
+#     assert func(8) == 21
