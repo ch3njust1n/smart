@@ -29,9 +29,9 @@ jobs:
         pytest
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        MODEL: ${{ env.MODEL }}
-        TEMPERATURE: ${{ env.TEMPERATURE }}
-        MAX_TOKENS: ${{ env.MAX_TOKENS }}
+        MODEL: text-davinci-003
+        TEMPERATURE: 0.7
+        MAX_TOKENS: 3600
 
     - name: Check code formatting with Black
       run: |
