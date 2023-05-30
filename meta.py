@@ -51,12 +51,10 @@ def adapt(code: str = "", use_llm: bool = False) -> Callable:
                 llm_code = openai.Completion.create(
                     model=os.getenv("MODEL"),
                     prompt=format_generative_function(func_source),
-                    temperature=float(os.getenv("TEMPERATURE")),
-                    max_tokens=int(os.getenv("MAX_TOKENS")),
+                    temperature=float(os.getenv("TEMPERATURE", 0.7)),
+                    max_tokens=int(os.getenv("MAX_TOKENS", 3600)),
                 )
                 code = llm_code.choices[0].text
-                print(llm_code)
-                print(f"\nLLM Code:\n{code}\n")
 
         except (TypeError, OSError):
             code = ""
