@@ -20,6 +20,7 @@ def setup_openai():
             "The OPENAI_API_KEY environment variable is not set. Please provide your OpenAI API key."
         )
 
+
 """
 A decorator that replaces the behavior of the decorated function with arbitrary code.
 
@@ -30,6 +31,7 @@ Args:
 Returns:
     A function that wraps the original function, replacing its behavior with the provided code.
 """
+
 
 def adapt(code: str = "", use_llm: bool = False) -> Callable:
     def extract_func_name(code: str) -> str:
@@ -62,7 +64,7 @@ def adapt(code: str = "", use_llm: bool = False) -> Callable:
             nonlocal code
             if code.strip() == "":
                 return func(*args, **kwargs)
-            else:                
+            else:
                 global_vars = {
                     "func_source": func_source,
                 }
@@ -71,7 +73,7 @@ def adapt(code: str = "", use_llm: bool = False) -> Callable:
 
                 # TODO: santize given function using traditional methods and LLM
                 code = textwrap.dedent(code)
-                byte_code = compile_restricted(code, '<inline>', 'exec')
+                byte_code = compile_restricted(code, "<inline>", "exec")
                 exec(byte_code, global_vars)
 
                 # TODO: sanitize generated code i.e. generative_func
