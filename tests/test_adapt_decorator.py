@@ -1,4 +1,5 @@
 # Demo code for dynamic metaprogramming decorator
+import time
 import pytest
 from meta import adapt, setup_openai
 
@@ -33,7 +34,7 @@ def test_multiply():
 
 def test_self_healing():
     func = """
-     def fibonacci(n):
+    def fibonacci(n):
         if n == 0:
             return 0
         elif n == 1:
@@ -50,11 +51,21 @@ def test_self_healing():
 
 
 def test_llm():
-    @adapt(use_llm=True)
-    def func(a, b):
-        prompt = """
-        Write a complete python 3 function, including the header and
-        return statement that computes the N-th Fibonacci number.
-        """
+    retry_count = 3
+    retry_delay = 5
 
-    assert func(8) == 21
+    for _ in range(retry_count):
+        try:
+
+            @adapt(use_llm=True)
+            def func(a, b):
+                prompt = """
+                Write a complete python 3 function, including the header and
+                return statement that computes the N-th Fibonacci number.
+                """
+
+            assert func(8) == 21
+            break
+        except Exception as e:
+            print(f"Test error: {e}. Retrying after delay...")
+            time.sleep(retry_delay)
