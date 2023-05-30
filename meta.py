@@ -4,6 +4,9 @@ import inspect
 import textwrap
 from typing import Callable, Any, Optional
 
+from RestrictedPython import compile_restricted
+from RestrictedPython import safe_globals
+
 """
 A decorator that replaces the behavior of the decorated function with arbitrary code.
 
@@ -42,18 +45,18 @@ def adapt(code: str = "", llm: Optional[Callable[[str], str]] = None) -> Callabl
             if code.strip() == "":
                 return func(*args, **kwargs)
             else:
-                local_vars = {
-                    "args": args,
-                    "kwargs": kwargs,
+                global_vars = {
                     "func_source": func_source,
                 }
 
                 # TODO: sanitize given function using traditional methods and LLM
                 code = textwrap.dedent(code)
-                exec(code, local_vars)
+                byte_code = compile_restricted(code, "<inline>", "exec")
+                exec(byte_code, global_vars)
 
                 # TODO: sanitize generated code i.e. generative_func
-                defined_func = local_vars[extract_func_name(code)]
+                func_name = extract_func_name(code)
+                defined_func = global_vars[func_name]
 
                 # TODO: sanitize result
                 result = defined_func(*args, **kwargs)

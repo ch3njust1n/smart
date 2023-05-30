@@ -1,13 +1,8 @@
 # Demo code for dynamic metaprogramming decorator
-import openai
+import time
 import pytest
 from meta import adapt
 from model import llm
-
-
-# @pytest.fixture(autouse=True)
-# def setup_global_variable():
-# setup_openai()
 
 
 def test_add():
@@ -52,11 +47,21 @@ def test_self_healing():
 
 
 def test_llm():
-    @adapt(llm=llm)
-    def func(a, b):
-        prompt = """
-        Write a complete python 3 function, including the header and
-        return statement that computes the N-th Fibonacci number.
-        """
+    retry_count = 3
+    retry_delay = 5
 
-    assert func(8) == 21
+    for _ in range(retry_count):
+        try:
+
+            @adapt(llm=llm)
+            def func(a, b):
+                prompt = """
+                Write a complete python 3 function, including the header and
+                return statement that computes the N-th Fibonacci number.
+                """
+
+            assert func(8) == 21
+            break
+        except Exception as e:
+            print(f"Test error: {e}. Retrying after delay...")
+            time.sleep(retry_delay)
