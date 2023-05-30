@@ -1,4 +1,4 @@
-# Dynamic Meta-programming with Large Language Models
+# Dynamic Metaprogramming with Large Language Models
 Metaprogramming with safe code injection from [generative APIs](https://github.com/ch3njust1n/generative-api) for adaptable software
 
 # Setup instructions
@@ -22,11 +22,10 @@ from meta import adapt, setup_openai
 
 @adapt(use_llm=True)
 def func(a, b):
-	'''
-	Write a python 3 function that 
-	computes the N-th Fibonacci number.
-	'''
-	pass
+   prompt = """
+   Write a complete python 3 function, including the header and
+   return statement that computes the N-th Fibonacci number.
+   """
 
-assert func(8) == 13
+assert func(8) == 21
 ```
