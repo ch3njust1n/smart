@@ -1,7 +1,7 @@
 # Demo code for dynamic metaprogramming decorator
 import time
 import pytest
-from meta import adapt
+from meta import adapt, catch
 from model import llm
 
 
@@ -61,6 +61,26 @@ def test_llm():
                 """
 
             assert func(8) == 21
+            break
+        except Exception as e:
+            print(f"Test error: {e}. Retrying after delay...")
+            time.sleep(retry_delay)
+
+
+def test_catch():
+    retry_count = 3
+    retry_delay = 5
+
+    for _ in range(retry_count):
+        try:
+            # Define a function that raises an exception
+            @catch(llm=llm)
+            def func(a, b):
+                raise Exception("Original function exception")
+
+            # Since the original function raises an exception, we expect the LLM
+            # to provide an implementation that returns the sum of a and b
+            assert func(3, 4) == 7
             break
         except Exception as e:
             print(f"Test error: {e}. Retrying after delay...")
