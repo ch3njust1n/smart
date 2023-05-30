@@ -27,6 +27,11 @@ jobs:
     - name: Run pytest
       run: |
         pytest
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        MODEL: ${{ env.MODEL }}
+        TEMPERATURE: ${{ env.TEMPERATURE }}
+        MAX_TOKENS: ${{ env.MAX_TOKENS }}
 
     - name: Check code formatting with Black
       run: |
