@@ -52,6 +52,7 @@ def test_llm():
 
     for _ in range(retry_count):
         try:
+
             @adapt(llm=llm)
             def func(a, b):
                 prompt = """
