@@ -31,7 +31,7 @@ def test_multiply():
     assert multiply(3, 4) == 12, "Test failed: Expected 12"
 
 
-def test_full_function():
+def test_self_healing():
     func = """
      def fibonacci(n):
         if n == 0:
