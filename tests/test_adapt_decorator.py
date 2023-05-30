@@ -1,12 +1,8 @@
 # Demo code for dynamic metaprogramming decorator
 import time
 import pytest
-from meta import adapt, setup_openai
-
-
-@pytest.fixture(autouse=True)
-def setup_global_variable():
-    setup_openai()
+from meta import adapt
+from model import llm
 
 
 def test_add():
@@ -56,8 +52,7 @@ def test_llm():
 
     for _ in range(retry_count):
         try:
-
-            @adapt(use_llm=True)
+            @adapt(llm=llm)
             def func(a, b):
                 prompt = """
                 Write a complete python 3 function, including the header and
