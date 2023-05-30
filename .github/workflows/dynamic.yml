@@ -2,7 +2,7 @@
 
 name: Python application
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build:
@@ -27,6 +27,11 @@ jobs:
     - name: Run pytest
       run: |
         pytest
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        MODEL: text-davinci-003
+        TEMPERATURE: 0.7
+        MAX_TOKENS: 3600
 
     - name: Check code formatting with Black
       run: |

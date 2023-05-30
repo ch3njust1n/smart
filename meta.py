@@ -19,6 +19,7 @@ from dotenv import load_dotenv
 from typing import Callable, Any, Optional
 
 import openai
+from prompt import format_generative_function
 
 
 def setup_openai():
@@ -49,13 +50,11 @@ def adapt(code: str = "", use_llm: bool = False) -> Callable:
             if use_llm:
                 llm_code = openai.Completion.create(
                     model=os.getenv("MODEL"),
-                    prompt=f"source\n{func_source}",
-                    temperature=float(os.getenv("TEMPERATURE")),
-                    max_tokens=int(os.getenv("MAX_TOKENS")),
+                    prompt=format_generative_function(func_source),
+                    temperature=float(os.getenv("TEMPERATURE", 0.7)),
+                    max_tokens=int(os.getenv("MAX_TOKENS", 3600)),
                 )
                 code = llm_code.choices[0].text
-                print(llm_code)
-                print(f"\nLLM Code:\n{code}\n")
 
         except (TypeError, OSError):
             code = ""
