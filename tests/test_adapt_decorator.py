@@ -1,11 +1,13 @@
 # Demo code for dynamic metaprogramming decorator
+import openai
 import pytest
-from meta import adapt, setup_openai
+from meta import adapt
+from model import llm
 
 
-@pytest.fixture(autouse=True)
-def setup_global_variable():
-    setup_openai()
+# @pytest.fixture(autouse=True)
+# def setup_global_variable():
+# setup_openai()
 
 
 def test_add():
@@ -50,7 +52,7 @@ def test_self_healing():
 
 
 def test_llm():
-    @adapt(use_llm=True)
+    @adapt(llm=llm)
     def func(a, b):
         prompt = """
         Write a complete python 3 function, including the header and

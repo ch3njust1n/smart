@@ -1,38 +1,22 @@
-from typing import Callable, Any
+import os
+import re
+import inspect
+import textwrap
+from typing import Callable, Any, Optional
 
 """
 A decorator that replaces the behavior of the decorated function with arbitrary code.
 
 Args:
-    code    (string, optional): A string of Python code that returns a result.
-    use_llm (boolean, optional): True to use a LLM to generate code, False otherwise.
+    code (string, optional): A string of Python code that returns a result.
+    llm  (Callable, optional): LLM to generate code.
 
 Returns:
     A function that wraps the original function, replacing its behavior with the provided code.
 """
 
-import os
-import re
-import inspect
-import textwrap
-from dotenv import load_dotenv
-from typing import Callable, Any, Optional
 
-import openai
-from prompt import format_generative_function
-
-
-def setup_openai():
-    load_dotenv()
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-
-    if openai.api_key is None:
-        raise ValueError(
-            "The OPENAI_API_KEY environment variable is not set. Please provide your OpenAI API key."
-        )
-
-
-def adapt(code: str = "", use_llm: bool = False) -> Callable:
+def adapt(code: str = "", llm: Optional[Callable[[str], str]] = None) -> Callable:
     def extract_func_name(code: str) -> str:
         match = re.search(r"def\s+(\w+)", code)
         if match:
@@ -47,14 +31,8 @@ def adapt(code: str = "", use_llm: bool = False) -> Callable:
             # Get the source code of the function
             func_source = inspect.getsource(func)
 
-            if use_llm:
-                llm_code = openai.Completion.create(
-                    model=os.getenv("MODEL"),
-                    prompt=format_generative_function(func_source),
-                    temperature=float(os.getenv("TEMPERATURE", 0.7)),
-                    max_tokens=int(os.getenv("MAX_TOKENS", 3600)),
-                )
-                code = llm_code.choices[0].text
+            if llm:
+                code = llm(func_source)
 
         except (TypeError, OSError):
             code = ""
@@ -70,7 +48,7 @@ def adapt(code: str = "", use_llm: bool = False) -> Callable:
                     "func_source": func_source,
                 }
 
-                # TODO: santize given function using traditional methods and LLM
+                # TODO: sanitize given function using traditional methods and LLM
                 code = textwrap.dedent(code)
                 exec(code, local_vars)
 
