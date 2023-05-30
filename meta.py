@@ -1,16 +1,3 @@
-from typing import Callable, Any
-
-"""
-A decorator that replaces the behavior of the decorated function with arbitrary code.
-
-Args:
-    code    (string, optional): A string of Python code that returns a result.
-    use_llm (boolean, optional): True to use a LLM to generate code, False otherwise.
-
-Returns:
-    A function that wraps the original function, replacing its behavior with the provided code.
-"""
-
 import os
 import re
 import inspect
@@ -19,6 +6,8 @@ from dotenv import load_dotenv
 from typing import Callable, Any, Optional
 
 import openai
+from RestrictedPython import compile_restricted
+from RestrictedPython import safe_globals
 from prompt import format_generative_function
 
 
@@ -30,6 +19,18 @@ def setup_openai():
         raise ValueError(
             "The OPENAI_API_KEY environment variable is not set. Please provide your OpenAI API key."
         )
+
+
+"""
+A decorator that replaces the behavior of the decorated function with arbitrary code.
+
+Args:
+    code    (string, optional): A string of Python code that returns a result.
+    use_llm (boolean, optional): True to use a LLM to generate code, False otherwise.
+
+Returns:
+    A function that wraps the original function, replacing its behavior with the provided code.
+"""
 
 
 def adapt(code: str = "", use_llm: bool = False) -> Callable:
@@ -64,21 +65,22 @@ def adapt(code: str = "", use_llm: bool = False) -> Callable:
             if code.strip() == "":
                 return func(*args, **kwargs)
             else:
-                local_vars = {
-                    "args": args,
-                    "kwargs": kwargs,
+                global_vars = {
                     "func_source": func_source,
                 }
 
+                func_name = extract_func_name(code)
+
                 # TODO: santize given function using traditional methods and LLM
                 code = textwrap.dedent(code)
-                exec(code, local_vars)
+                byte_code = compile_restricted(code, "<inline>", "exec")
+                exec(byte_code, global_vars)
 
                 # TODO: sanitize generated code i.e. generative_func
-                defined_func = local_vars[extract_func_name(code)]
+                generative_func = global_vars[func_name]
 
                 # TODO: sanitize result
-                result = defined_func(*args, **kwargs)
+                result = generative_func(*args, **kwargs)
 
                 return result
 
