@@ -5,10 +5,15 @@ Metaprogramming with safe code injection from [generative APIs](https://github.c
 1. Create `.env` for your environment variables. See `.env.example`.
 2. Add your API key
 
-To run unit tests
+To run all unit tests. `-s` shows print statements.
 
 ```bash
 pytest -s
+```
+
+To run a specific unit test:
+```bash
+pytest -k <test name>
 ```
 
 ### Decorator usage
@@ -16,6 +21,8 @@ pytest -s
 1. `OPENAI_API_KEY` must be set in `.env` or in your terminal `OPENAI_API_KEY=your-api-key-here`
 2. Define your custome LLM solution. Then import the decorators and your llm function and pass it to the decorator.
 3. Use as follows:
+
+### Function decorators
 
 `@adapt` decorator example using a large language model:
 ```python
@@ -52,8 +59,8 @@ def funkodunko():
 
 Produces a human-readable summary of the stack trace:
 ```
-tests/test_adapt_decorator.py new_exception_message: Traceback (most recent call last):
-  File "/Users/justin/Documents/dev/personal/ml/dynamic-mp-llm/meta.py", line 173, in wrapper
+tests/test_adapt_decorator.py Traceback (most recent call last):
+  File "/Users/justin/Documents/dev/personal/ml/dynamic-mp-llm/meta.py", line 167, in wrapper
     return func(*args, **kwargs)
            ^^^^^^^^^^^^^^^^^^^^^
   File "/Users/justin/Documents/dev/personal/ml/dynamic-mp-llm/tests/test_adapt_decorator.py", line 100, in funkodunko
@@ -63,5 +70,10 @@ IndexError: list index out of range
 
 
 Human-readable summary:
-(funkodunko) IndexError: list index out of range
+(funkodunko) Attempted to access an element of a list that does not exist. 
+
+Suggestions for how to fix the error:
+1. Check the length of the list to make sure there are enough elements to access the desired index. 
+2. If the list is too short, add elements to the list in order to access the desired index.
+3. If the list is empty, consider initializing the list with data.
 ```

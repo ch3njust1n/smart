@@ -174,6 +174,7 @@ def stack_trace(llm: Optional[Callable[[str], str]] = None) -> Callable:
                     prompt = format_stack_trace(stack_trace)
                     summary = textwrap.dedent(llm(prompt))
                     new_exception_message = f"{stack_trace}\n{summary}"
+                    print(new_exception_message)
 
                     # Raise a new exception with the modified message
                     raise Exception(new_exception_message) from None

@@ -50,7 +50,8 @@ Returns:
 def format_stack_trace(text: str) -> str:
     return textwrap.dedent(
         f"""
-	Summarize the following stack trace. Keep relevant line numbers.
+	Explain the following stack trace.
+	Make suggestions for how to fix the error.
 	Given the name of the function where the exception occurred.
 	<function name> is the function name of where the error occurred.
 	<function name> is not the function called wrapper.
@@ -58,7 +59,10 @@ def format_stack_trace(text: str) -> str:
 	Format the stack trace as follows:
 	```
 	Human-readable summary:
-	(<function name>) <exception type>: <exception message>
+	(<function name>) <explanation of concretely what went wrong>
+
+	Suggestions for how to fix the error:
+	<numbered list with steps to fix the error>
 	\n
 	```
 
