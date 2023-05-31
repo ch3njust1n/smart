@@ -14,21 +14,38 @@ Returns:
 def format_generative_function(code: str) -> str:
     return textwrap.dedent(
         f"""
-	Do not write a driver program, do not comment, do not explain. 
+	Follow these rules precisely:
+	Do's:
+	Generate a function with the same number of parameters as the original function!
+
+	Don'ts:
+	Do not write a driver program.
+	Do not comment. 
+	Do not explain the code. 
+	Do not give a header introducing the code e.g. 'Rewritten source code:'
 	Do not write any code outside of the function body.
 	Do not call the function or return a reference to it.
+	Do not use decorators.
+	Do not print anything!
+	Do not add text before ### BEGIN FUNCTION ###.
+	Do not add text after ### END FUNCTION ###.
+	Stop generating code when you see ### END FUNCTION ###.
+	
 	For example, only do this:
 	```
+	### BEGIN FUNCTION ###
 	def func():
-	# function body
+	\t# function body
+	### END FUNCTION ###
 	```
 	and do not do this:
 	```
+	### BEGIN FUNCTION ###
 	def func():
-	# function body
+	\t# function body
+	### END FUNCTION ###
 	return func()
 	```
-	Only return the function header and body!
  
 	Source code:
 	{code}
