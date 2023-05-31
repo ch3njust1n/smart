@@ -2,10 +2,13 @@ import os
 import re
 import inspect
 import textwrap
+import traceback
 from typing import Callable, Any, Optional
 
 from RestrictedPython import compile_restricted
 from RestrictedPython import safe_globals
+
+from prompt import format_generative_function, format_stack_trace
 
 """
 A decorator that replaces the behavior of the decorated function with arbitrary code.
@@ -35,7 +38,8 @@ def adapt(code: str = "", llm: Optional[Callable[[str], str]] = None) -> Callabl
             func_source = inspect.getsource(func)
 
             if llm:
-                code = llm(func_source)
+                prompt = format_generative_function(func_source)
+                code = llm(prompt)
 
         except (TypeError, OSError):
             code = ""
@@ -69,11 +73,11 @@ def adapt(code: str = "", llm: Optional[Callable[[str], str]] = None) -> Callabl
 
 
 """
-The `catch` decorator captures exceptions from the decorated function. An optional Language Learning Model (LLM) 
-function can be passed to generate replacement code in the event of an exception. 
+The `catch` decorator captures exceptions from the decorated function. An optional Language Learning 
+Model (LLM) function can be passed to generate replacement code in the event of an exception. 
 
-If the LLM function is absent or its code also raises an exception, the original exception gets re-raised, allowing 
-for upstream error handling or user notification.
+If the LLM function is absent or its code also raises an exception, the original exception gets re-raised, 
+allowing for upstream error handling or user notification.
 
 Args:
     llm (Callable[[str], str], optional): A function that takes a string of Python code as input and returns a 
@@ -110,6 +114,7 @@ def catch(llm: Optional[Callable[[str], str]] = None) -> Callable:
                 print(f"An exception occurred in the original function: {e}")
                 # If there was an exception, and an LLM is provided, use it
                 if llm and func_source:
+                    prompt = format_generative_function(func_source)
                     code = llm(func_source)
 
                     if code.strip() != "":
@@ -133,6 +138,48 @@ def catch(llm: Optional[Callable[[str], str]] = None) -> Callable:
 
             # If there was an exception, and no LLM is provided, or if the LLM fails, re-raise the original exception
             raise
+
+        return wrapper
+
+    return decorator
+
+
+"""
+A decorator that intercepts exceptions from a decorated function, feeding the stack trace to an 
+optional Language Learning Model (LLM). The LLM, if present, crafts a new exception message from 
+the stack trace, enhancing error reporting or debugging. In the absence of an LLM or if the LLM fails, 
+the original exception is propagated.
+
+Args:
+    llm (Callable[[str], str], optional): A function that takes a stack trace as a string 
+        and returns a string to be used as the message for a new exception.
+
+Returns:
+    Callable: A new function that wraps the original one, adding exception handling 
+        capabilities as described above.
+"""
+
+
+def stack_trace(llm: Optional[Callable[[str], str]] = None) -> Callable:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                # Capture the stack trace
+                stack_trace = traceback.format_exc()
+
+                # If an LLM function is provided, pass the stack trace to it
+                if llm:
+                    prompt = format_stack_trace(stack_trace)
+                    summary = textwrap.dedent(llm(prompt))
+                    new_exception_message = f"{stack_trace}\n{summary}"
+
+                    # Raise a new exception with the modified message
+                    raise Exception(new_exception_message) from None
+                else:
+                    # If no LLM function is provided, just re-raise the original exception
+                    raise e from None
 
         return wrapper
 

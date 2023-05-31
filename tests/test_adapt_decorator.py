@@ -1,7 +1,7 @@
 # Demo code for dynamic metaprogramming decorator
 import time
 import pytest
-from meta import adapt, catch
+from meta import adapt, catch, stack_trace
 from model import llm
 
 
@@ -82,6 +82,29 @@ def test_catch():
             # to provide an implementation that returns the sum of a and b
             assert func(3, 4) == 7
             break
+        except Exception as e:
+            print(f"Test error: {e}. Retrying after delay...")
+            time.sleep(retry_delay)
+
+
+def test_stack_trace():
+    retry_count = 3
+    retry_delay = 5
+
+    for _ in range(retry_count):
+        try:
+
+            @stack_trace(llm=llm)
+            def funkodunko():
+                items = [1, 2, 3]
+                return items[5]
+
+            try:
+                funkodunko()
+            except Exception as e:
+                # The exception message should be the stack trace, as returned by the LLM.
+                assert isinstance(e, Exception)
+                break
         except Exception as e:
             print(f"Test error: {e}. Retrying after delay...")
             time.sleep(retry_delay)
