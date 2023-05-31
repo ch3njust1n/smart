@@ -34,10 +34,10 @@ def test_generative_metaclass_with_gpt():
             prompt = format_generative_function(prompt)
             new_trick = gpt(prompt)
             GenerativeMetaClass.generate(Doggo, new_trick)
-            a_good_boy = Doggo('Chewy')
-            assert a_good_boy.do_trick() == '*sit*'
-            a_good_boy.set_treat('roast beef')
-            assert a_good_boy.stomach == 'roast beef'
+            a_good_boy = Doggo("Chewy")
+            assert a_good_boy.do_trick() == "*sit*"
+            a_good_boy.set_treat("roast beef")
+            assert a_good_boy.stomach == "roast beef"
             break
         except Exception as e:
             print(f"Test error: {e}. Retrying after delay...")
