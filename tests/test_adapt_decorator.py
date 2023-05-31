@@ -1,6 +1,5 @@
 # Demo code for dynamic metaprogramming decorator
 import time
-import pytest
 from meta import adapt, catch, stack_trace
 from model import gpt, claude
 
