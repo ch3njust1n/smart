@@ -17,6 +17,7 @@ pytest -s
 
 2. Use as follows:
 
+`@adapt` decorator example using a large language model:
 ```
 from meta import adapt, setup_openai
 
@@ -28,4 +29,35 @@ def func(a, b):
    """
 
 assert func(8) == 21
+```
+
+`@catch` decorator example:
+```
+@catch(llm=llm)
+def func(a, b):
+      raise Exception("Original function exception")
+```
+
+`@stack_trace` decorator example:
+```
+@stack_trace(llm=llm)
+def funkodunko():
+      items = [1, 2, 3]
+      return items[5]
+```
+
+Produces a human-readable summary of the stack trace:
+```
+tests/test_adapt_decorator.py new_exception_message: Traceback (most recent call last):
+  File "/Users/justin/Documents/dev/personal/ml/dynamic-mp-llm/meta.py", line 173, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/justin/Documents/dev/personal/ml/dynamic-mp-llm/tests/test_adapt_decorator.py", line 100, in funkodunko
+    return items[5]
+           ~~~~~^^^
+IndexError: list index out of range
+
+
+Human-readable summary:
+(funkodunko) IndexError: list index out of range
 ```
