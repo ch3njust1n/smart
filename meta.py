@@ -8,6 +8,8 @@ from typing import Callable, Any, Optional
 from RestrictedPython import compile_restricted
 from RestrictedPython import safe_globals
 
+from prompt import format_generative_function, format_stack_trace
+
 """
 A decorator that replaces the behavior of the decorated function with arbitrary code.
 
@@ -36,7 +38,8 @@ def adapt(code: str = "", llm: Optional[Callable[[str], str]] = None) -> Callabl
             func_source = inspect.getsource(func)
 
             if llm:
-                code = llm(func_source)
+                prompt = format_generative_function(func_source)
+                code = llm(prompt)
 
         except (TypeError, OSError):
             code = ""
@@ -111,6 +114,7 @@ def catch(llm: Optional[Callable[[str], str]] = None) -> Callable:
                 print(f"An exception occurred in the original function: {e}")
                 # If there was an exception, and an LLM is provided, use it
                 if llm and func_source:
+                    prompt = format_generative_function(func_source)
                     code = llm(func_source)
 
                     if code.strip() != "":
@@ -173,7 +177,8 @@ def stack_trace(llm: Optional[Callable[[str], str]] = None) -> Callable:
 
                 # If an LLM function is provided, pass the stack trace to it
                 if llm:
-                    new_exception_message = llm(stack_trace)
+                    prompt = format_stack_trace(stack_trace)
+                    new_exception_message = llm(prompt)
 
                     # Raise a new exception with the modified message
                     raise Exception(new_exception_message) from None

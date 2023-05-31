@@ -30,3 +30,22 @@ def format_generative_function(code: str) -> str:
 	Source code:
 	{code}
 	"""
+
+
+"""
+Prompt for summarizing as human-readable stack traces
+
+Args:
+    text (string): Stack trace to be appended to prompt.
+    
+Returns:
+    Prompt for summarizing a stack trace.
+"""
+
+
+def format_stack_trace(text: str) -> str:
+    return f"""
+	Summarize the following stack trace and keep and relevant line numbers.
+	Stack trace:
+	{text}
+	"""

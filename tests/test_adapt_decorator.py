@@ -85,3 +85,24 @@ def test_catch():
         except Exception as e:
             print(f"Test error: {e}. Retrying after delay...")
             time.sleep(retry_delay)
+
+
+def test_stack_trace():
+    retry_count = 3
+    retry_delay = 5
+
+    for _ in range(retry_count):
+        try:
+            @stack_trace(llm=llm)
+            def func():
+                raise ValueError("Original exception")
+
+            try:
+                func()
+            except Exception as e:
+                # The exception message should be the stack trace, as returned by the LLM.
+                assert isinstance(e, ValueError)
+                break
+        except Exception as e:
+            print(f"Test error: {e}. Retrying after delay...")
+            time.sleep(retry_delay)
