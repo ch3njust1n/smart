@@ -2,7 +2,7 @@
 import time
 import pytest
 from meta import adapt, catch, stack_trace
-from model import llm
+from model import gpt, claude
 
 
 def test_add():
@@ -53,7 +53,7 @@ def test_llm():
     for _ in range(retry_count):
         try:
 
-            @adapt(llm=llm)
+            @adapt(llm=gpt)
             def func(a, b):
                 prompt = """
                 Write a complete python 3 function, including the header and
@@ -74,7 +74,7 @@ def test_catch():
     for _ in range(retry_count):
         try:
             # Define a function that raises an exception
-            @catch(llm=llm)
+            @catch(llm=gpt)
             def func(a, b):
                 raise Exception("Original function exception")
 
@@ -94,7 +94,7 @@ def test_stack_trace():
     for _ in range(retry_count):
         try:
 
-            @stack_trace(llm=llm)
+            @stack_trace(llm=gpt)
             def funkodunko():
                 items = [1, 2, 3]
                 return items[5]
