@@ -182,12 +182,13 @@ def stack_trace(llm: Optional[Callable[[str], str]] = None) -> Callable:
 
     return decorator
 
+
 class GenerativeMetaClass(type):
     def __init__(cls, name, bases, attrs):
         super().__init__(name, bases, attrs)
 
     @staticmethod
-    def generate(cls: Type['GenerativeMetaClass'], code: str):
+    def generate(cls: Type["GenerativeMetaClass"], code: str):
         local_dict = {}
         exec(code, {}, local_dict)
         func_name = extract_func_name(code)
