@@ -48,4 +48,4 @@ def claude(prompt: str) -> str:
         max_tokens_to_sample=int(os.getenv("MAX_TOKENS", 3600)),
     )
 
-    return llm_code['completion']
+    return llm_code["completion"]
