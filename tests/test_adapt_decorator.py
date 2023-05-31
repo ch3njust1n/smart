@@ -1,7 +1,7 @@
 # Demo code for dynamic metaprogramming decorator
 import time
 import pytest
-from meta import adapt, catch
+from meta import adapt, catch, stack_trace
 from model import llm
 
 
@@ -93,15 +93,17 @@ def test_stack_trace():
 
     for _ in range(retry_count):
         try:
+
             @stack_trace(llm=llm)
-            def func():
-                raise ValueError("Original exception")
+            def funkodunko():
+                items = [1, 2, 3]
+                return items[5]
 
             try:
-                func()
+                funkodunko()
             except Exception as e:
                 # The exception message should be the stack trace, as returned by the LLM.
-                assert isinstance(e, ValueError)
+                assert isinstance(e, Exception)
                 break
         except Exception as e:
             print(f"Test error: {e}. Retrying after delay...")

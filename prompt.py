@@ -1,3 +1,5 @@
+import textwrap
+
 """
 Prompt for generating entire functions
 
@@ -10,7 +12,8 @@ Returns:
 
 
 def format_generative_function(code: str) -> str:
-    return f"""
+    return textwrap.dedent(
+        f"""
 	Do not write a driver program, do not comment, do not explain. 
 	Do not write any code outside of the function body.
 	Do not call the function or return a reference to it.
@@ -30,6 +33,7 @@ def format_generative_function(code: str) -> str:
 	Source code:
 	{code}
 	"""
+    )
 
 
 """
@@ -44,8 +48,21 @@ Returns:
 
 
 def format_stack_trace(text: str) -> str:
-    return f"""
-	Summarize the following stack trace and keep and relevant line numbers.
+    return textwrap.dedent(
+        f"""
+	Summarize the following stack trace. Keep relevant line numbers.
+	Given the name of the function where the exception occurred.
+	<function name> is the function name of where the error occurred.
+	<function name> is not the function called wrapper.
+	<function name> is not a file name e.g. ending with .py.
+	Format the stack trace as follows:
+	```
+	Human-readable summary:
+	(<function name>) <exception type>: <exception message>
+	\n
+	```
+
 	Stack trace:
 	{text}
 	"""
+    )

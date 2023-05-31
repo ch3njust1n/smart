@@ -7,6 +7,7 @@ import openai
 from dotenv import load_dotenv
 
 load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 """
 OpenAI Completion API wrapper
@@ -20,8 +21,6 @@ Returns:
 
 
 def llm(prompt: str) -> str:
-    openai.api_key = os.getenv("OPENAI_API_KEY")
-
     if openai.api_key is None:
         raise ValueError(
             "The OPENAI_API_KEY environment variable is not set. Please provide your OpenAI API key."

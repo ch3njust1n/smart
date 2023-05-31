@@ -73,11 +73,11 @@ def adapt(code: str = "", llm: Optional[Callable[[str], str]] = None) -> Callabl
 
 
 """
-The `catch` decorator captures exceptions from the decorated function. An optional Language Learning Model (LLM) 
-function can be passed to generate replacement code in the event of an exception. 
+The `catch` decorator captures exceptions from the decorated function. An optional Language Learning 
+Model (LLM) function can be passed to generate replacement code in the event of an exception. 
 
-If the LLM function is absent or its code also raises an exception, the original exception gets re-raised, allowing 
-for upstream error handling or user notification.
+If the LLM function is absent or its code also raises an exception, the original exception gets re-raised, 
+allowing for upstream error handling or user notification.
 
 Args:
     llm (Callable[[str], str], optional): A function that takes a string of Python code as input and returns a 
@@ -145,16 +145,10 @@ def catch(llm: Optional[Callable[[str], str]] = None) -> Callable:
 
 
 """
-A decorator that catches exceptions thrown by the decorated function, and passes the 
-corresponding stack trace to an optional Language Learning Model (LLM) function.
-
-The LLM function, if provided, is expected to generate a new exception message from the 
-provided stack trace. This message is used to raise a new exception, replacing the original 
-one. This allows for dynamic exception messages based on the context of the error, potentially
-aiding in debugging or providing more descriptive error reports to users.
-
-If the LLM function is not provided, or if it fails to generate a new exception message, 
-the original exception is re-raised.
+A decorator that intercepts exceptions from a decorated function, feeding the stack trace to an 
+optional Language Learning Model (LLM). The LLM, if present, crafts a new exception message from 
+the stack trace, enhancing error reporting or debugging. In the absence of an LLM or if the LLM fails, 
+the original exception is propagated.
 
 Args:
     llm (Callable[[str], str], optional): A function that takes a stack trace as a string 
@@ -178,7 +172,8 @@ def stack_trace(llm: Optional[Callable[[str], str]] = None) -> Callable:
                 # If an LLM function is provided, pass the stack trace to it
                 if llm:
                     prompt = format_stack_trace(stack_trace)
-                    new_exception_message = llm(prompt)
+                    summary = textwrap.dedent(llm(prompt))
+                    new_exception_message = f"{stack_trace}\n{summary}"
 
                     # Raise a new exception with the modified message
                     raise Exception(new_exception_message) from None
