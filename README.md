@@ -82,3 +82,26 @@ Suggestions for how to fix the error:
 2. If the list is too short, add elements to the list in order to access the desired index.
 3. If the list is empty, consider initializing the list with data.
 ```
+
+### Metaclasses
+
+Define your class:
+```
+from model import gpt
+from meta import GenerativeMetaClass
+from prompt import format_generative_function
+
+class Doggo(metaclass=GenerativeMetaClass):
+    def __init__(self, name: str):
+        self.name = name
+
+    def set_treat(self, treat: str):
+        self.stomach = treat
+
+prompt = "Write a function with the header `def do_trick(self)` that returns a string '*sit*'"
+prompt = format_generative_function(prompt)
+new_trick = gpt(prompt)
+GenerativeMetaClass.generate(Doggo, new_trick)
+a_good_boy = Doggo('Chewy')
+a_good_boy.set_treat('roast beef')
+```
