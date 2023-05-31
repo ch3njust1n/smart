@@ -2,6 +2,7 @@ import os
 import re
 import inspect
 import textwrap
+import traceback
 from typing import Callable, Any, Optional
 
 from RestrictedPython import compile_restricted
@@ -133,6 +134,52 @@ def catch(llm: Optional[Callable[[str], str]] = None) -> Callable:
 
             # If there was an exception, and no LLM is provided, or if the LLM fails, re-raise the original exception
             raise
+
+        return wrapper
+
+    return decorator
+
+
+"""
+A decorator that catches exceptions thrown by the decorated function, and passes the 
+corresponding stack trace to an optional Language Learning Model (LLM) function.
+
+The LLM function, if provided, is expected to generate a new exception message from the 
+provided stack trace. This message is used to raise a new exception, replacing the original 
+one. This allows for dynamic exception messages based on the context of the error, potentially
+aiding in debugging or providing more descriptive error reports to users.
+
+If the LLM function is not provided, or if it fails to generate a new exception message, 
+the original exception is re-raised.
+
+Args:
+    llm (Callable[[str], str], optional): A function that takes a stack trace as a string 
+        and returns a string to be used as the message for a new exception.
+
+Returns:
+    Callable: A new function that wraps the original one, adding exception handling 
+        capabilities as described above.
+"""
+
+
+def stack_trace(llm: Optional[Callable[[str], str]] = None) -> Callable:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            try:
+                return func(*args, **kwargs)
+            except Exception as e:
+                # Capture the stack trace
+                stack_trace = traceback.format_exc()
+
+                # If an LLM function is provided, pass the stack trace to it
+                if llm:
+                    new_exception_message = llm(stack_trace)
+
+                    # Raise a new exception with the modified message
+                    raise Exception(new_exception_message) from None
+                else:
+                    # If no LLM function is provided, just re-raise the original exception
+                    raise e from None
 
         return wrapper
 
