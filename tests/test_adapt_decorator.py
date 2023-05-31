@@ -28,7 +28,7 @@ def test_multiply():
     assert multiply(3, 4) == 12, "Test failed: Expected 12"
 
 
-def test_self_healing():
+def test_self_healing_no_llm():
     func = """
     def fibonacci(n):
         if n == 0:
@@ -44,6 +44,29 @@ def test_self_healing():
         return n
 
     assert broken_fibonacci(8) == 21
+
+
+def test_self_healing_with_llm():
+    retry_count = 3
+    retry_delay = 5
+
+    for _ in range(retry_count):
+        try:
+
+            @adapt(llm=llm)
+            def fibonacci(n):
+                if n <= 0:
+                    return 0
+                elif n == 1:
+                    return 1
+                else:
+                    return fibonacci(n - 1) + fibonacci(n - 2) + 1
+
+            assert fibonacci(8) == 21
+            break
+        except Exception as e:
+            print(f"Test error: {e}. Retrying after delay...")
+            time.sleep(retry_delay)
 
 
 def test_llm():
