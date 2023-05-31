@@ -5,10 +5,15 @@ Metaprogramming with safe code injection from [generative APIs](https://github.c
 1. Create `.env` for your environment variables. See `.env.example`.
 2. Add your API key
 
-To run all unit tests. `-s` shows print statements.
+To run all unit tests. 
+
+**Options:**
+- `-s` shows print statements
+- `-v` indicates when a tests passes
+- `--durations=0` displays a list of n slowest tests at the end of the test session
 
 ```bash
-pytest -s
+pytest -s -v --durations=0
 ```
 
 To run a specific unit test:

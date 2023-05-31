@@ -8,6 +8,7 @@ from typing import Callable, Any, Optional
 from RestrictedPython import compile_restricted
 from RestrictedPython import safe_globals
 
+from utils import remove_prepended
 from prompt import format_generative_function, format_stack_trace
 
 """
@@ -54,8 +55,9 @@ def adapt(code: str = "", llm: Optional[Callable[[str], str]] = None) -> Callabl
                 }
 
                 # TODO: sanitize given function using traditional methods and LLM
+                code = remove_prepended(code)
                 code = textwrap.dedent(code)
-                byte_code = compile_restricted(code, "<inline>", "exec")
+                byte_code = compile_restricted(code, mode="exec")
                 exec(byte_code, global_vars)
 
                 # TODO: sanitize generated code i.e. generative_func
@@ -123,8 +125,9 @@ def catch(llm: Optional[Callable[[str], str]] = None) -> Callable:
                         }
 
                         # TODO: sanitize given function using traditional methods and LLM
+                        code = remove_prepended(code)
                         code = textwrap.dedent(code)
-                        byte_code = compile_restricted(code, "<inline>", "exec")
+                        byte_code = compile_restricted(code, mode="exec")
                         exec(byte_code, global_vars)
 
                         # TODO: sanitize generated code i.e. generative_func
