@@ -14,14 +14,14 @@ pytest -s
 ### Decorator usage
 
 1. `OPENAI_API_KEY` must be set in `.env` or in your terminal `OPENAI_API_KEY=your-api-key-here`
-
-2. Use as follows:
+2. Define your custome LLM solution. Then import the decorators and your llm function and pass it to the decorator.
+3. Use as follows:
 
 `@adapt` decorator example using a large language model:
-```
-from meta import adapt, setup_openai
+```python
+from meta import adapt
 
-@adapt(use_llm=True)
+@adapt(llm=llm)
 def func(a, b):
    prompt = """
    Write a complete python 3 function, including the header and
@@ -32,14 +32,18 @@ assert func(8) == 21
 ```
 
 `@catch` decorator example:
-```
+```python
+from meta import catch
+
 @catch(llm=llm)
 def func(a, b):
       raise Exception("Original function exception")
 ```
 
 `@stack_trace` decorator example:
-```
+```python
+from meta import stack_trace
+
 @stack_trace(llm=llm)
 def funkodunko():
       items = [1, 2, 3]
