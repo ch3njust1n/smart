@@ -16,6 +16,7 @@ def format_generative_function(code: str) -> str:
         f"""
 	Follow these rules precisely:
 	Do's:
+    Only generate Python code.
 	Generate a function with the same number of parameters as the original function!
 
 	Don'ts:

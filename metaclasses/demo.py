@@ -1,17 +1,14 @@
-class MetaCar(type):
-    def __init__(cls, name, bases, attrs):
-        super().__init__(name, bases, attrs)
-
-        honk_code = """
-def honk(self, times=1):
-    for i in range(times):
-        print(f'{i} - Beep beep!')
-"""
-        local_dict = {}
-        exec(honk_code, {}, local_dict)
-        setattr(cls, "honk", local_dict["honk"])
+from meta import GenerativeMetaClass
 
 
-class Car(metaclass=MetaCar):
+class Car(metaclass=GenerativeMetaClass):
     def __init__(self):
         pass
+
+
+class Doggo(metaclass=GenerativeMetaClass):
+    def __init__(self, name: str):
+        self.name = name
+
+    def set_treat(self, treat: str):
+        self.stomach = treat

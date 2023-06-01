@@ -3,12 +3,12 @@ import re
 import inspect
 import textwrap
 import traceback
-from typing import Callable, Any, Optional
+from typing import Callable, Any, Optional, Type
 
 from RestrictedPython import compile_restricted
 from RestrictedPython import safe_globals
 
-from utils import remove_prepended
+from utils import remove_prepended, extract_func_name
 from prompt import format_generative_function, format_stack_trace
 
 """
@@ -24,13 +24,6 @@ Returns:
 
 
 def adapt(code: str = "", llm: Optional[Callable[[str], str]] = None) -> Callable:
-    def extract_func_name(code: str) -> str:
-        match = re.search(r"def\s+(\w+)", code)
-        if match:
-            return match.group(1)
-        else:
-            raise ValueError("No function definition found in provided code.")
-
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         nonlocal code
         func_source: Optional[str] = None
@@ -188,3 +181,15 @@ def stack_trace(llm: Optional[Callable[[str], str]] = None) -> Callable:
         return wrapper
 
     return decorator
+
+
+class GenerativeMetaClass(type):
+    def __init__(cls, name, bases, attrs):
+        super().__init__(name, bases, attrs)
+
+    @staticmethod
+    def generate(cls: Type["GenerativeMetaClass"], code: str):
+        local_dict = {}
+        exec(code, {}, local_dict)
+        func_name = extract_func_name(code)
+        setattr(cls, func_name, local_dict[func_name])

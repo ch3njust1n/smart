@@ -23,3 +23,23 @@ def remove_prepended(func_string: str, end_marker="### END FUNCTION ###") -> str
         func_string = func_string[: end_marker_index + len(end_marker)]
 
     return func_string
+
+
+"""
+This function takes a string that represents a function. 
+It parses the string and returns the function name else raises an error.
+
+Args:
+    code (str): A string that represents a function.
+
+Returns:
+    A string of the function name.
+"""
+
+
+def extract_func_name(code: str) -> str:
+    match = re.search(r"def\s+(\w+)", code)
+    if match:
+        return match.group(1)
+    else:
+        raise ValueError("No function definition found in provided code.")
