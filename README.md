@@ -105,3 +105,5 @@ GenerativeMetaClass.generate(Doggo, new_trick)
 a_good_boy = Doggo('Chewy')
 a_good_boy.set_treat('roast beef')
 ```
+
+### Code Injection
