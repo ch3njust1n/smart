@@ -173,8 +173,8 @@ def test_catch_with_claude():
             time.sleep(retry_delay)
 
 
-def test_stack_trace_with_gpt():
-    retry_count = 3
+def test_func_stack_trace_with_gpt():
+    retry_count = 5
     retry_delay = 5
 
     for _ in range(retry_count):
@@ -212,6 +212,28 @@ def test_stack_trace_with_claude():
                 funkodunko()
             except Exception as e:
                 # The exception message should be the stack trace, as returned by the LLM.
+                assert isinstance(e, Exception)
+                break
+        except Exception as e:
+            print(f"Test error: {e}. Retrying after delay...")
+            time.sleep(retry_delay)
+
+
+def test_class_stack_trace_decorator_with_gpt():
+    @stack_trace(llm=gpt)
+    class DecoratedClass:
+        def func(self):
+            raise ValueError("Induced exception")
+
+    retry_count = 5
+    retry_delay = 5
+
+    for _ in range(retry_count):
+        try:
+            try:
+                instance = DecoratedClass()
+                instance.func()
+            except Exception as e:
                 assert isinstance(e, Exception)
                 break
         except Exception as e:

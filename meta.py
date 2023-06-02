@@ -157,28 +157,43 @@ Returns:
 
 
 def stack_trace(llm: Optional[Callable[[str], str]] = None) -> Callable:
-    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
-            try:
-                return func(*args, **kwargs)
-            except Exception as e:
-                # Capture the stack trace
-                stack_trace = traceback.format_exc()
+    def decorator(obj: Any) -> Any:
+        if isinstance(obj, Type):
 
-                # If an LLM function is provided, pass the stack trace to it
-                if llm:
-                    prompt = format_stack_trace(stack_trace)
-                    summary = textwrap.dedent(llm(prompt))
-                    new_exception_message = f"{stack_trace}\n{summary}"
-                    print(new_exception_message)
+            class Wrapper(obj):
+                pass
 
-                    # Raise a new exception with the modified message
-                    raise Exception(new_exception_message) from None
-                else:
-                    # If no LLM function is provided, just re-raise the original exception
-                    raise e from None
+            for attr_name, attr_value in obj.__dict__.items():
+                if callable(attr_value):
+                    setattr(Wrapper, attr_name, decorator(attr_value))
 
-        return wrapper
+            return Wrapper
+
+        elif callable(obj):
+
+            def wrapper(*args: Any, **kwargs: Any) -> Any:
+                try:
+                    return obj(*args, **kwargs)
+                except Exception as e:
+                    # Capture the stack trace
+                    stack_trace = traceback.format_exc()
+
+                    # If an LLM function is provided, pass the stack trace to it
+                    if llm:
+                        prompt = format_stack_trace(stack_trace)
+                        summary = textwrap.dedent(llm(prompt))
+                        new_exception_message = f"{stack_trace}\n{summary}"
+                        print(new_exception_message)
+
+                        # Raise a new exception with the modified message
+                        raise Exception(new_exception_message) from None
+                    else:
+                        # If no LLM function is provided, just re-raise the original exception
+                        raise e from None
+
+            return wrapper
+        else:
+            raise TypeError("Unsupported object type for decoration")
 
     return decorator
 
