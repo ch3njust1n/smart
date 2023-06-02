@@ -26,7 +26,6 @@ def test_generated_stringified_class():
     """
     )
     properties = eval(properties)
-    pprint(properties)
     global_vars = {}
     func_source = properties["my_func"]
     exec(func_source, global_vars)
