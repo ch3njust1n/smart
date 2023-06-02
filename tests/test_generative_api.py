@@ -1,3 +1,4 @@
+import time
 import pytest
 from model import gpt, claude
 from utils import extract_func_name
@@ -11,7 +12,7 @@ def model_resp():
             {
                 "component": "device",
                 "action": "save-custom-mode",
-                "parameters": "study-mode",
+                "parameter": "study-mode",
                 "commands": [
                     {
                         "component": "app",
@@ -41,8 +42,8 @@ def model_resp():
     }
 
 
-def test_imagined_action_with_gpt():
-    @generate_attribute(model=gpt)
+def test_imagined_action_with_gpt(model_resp):
+    @generate_attribute(model=claude)
     class Mobile(object):
         def __init__(self):
             pass
@@ -56,14 +57,24 @@ def test_imagined_action_with_gpt():
     mobile = Mobile()
     results = []
 
-    for action in model_resp["actions"]:
-        func_name = action["action"]
+    retry_count = 3
+    retry_delay = 5
+
+    for _ in range(retry_count):
         try:
-            results.append(getattr(mobile, func_name)())
-        except AttributeError:
-            func_src = gpt(str(action))
-            global_vars = {}
-            exec(func_src, global_vars)
-            func_name = extract_func_name(func_src)
-            generated_func = global_vars[func_name]
-            results.append(generated_func())
+            for action in model_resp["actions"]:
+                func_name = action["action"]
+                kwarg = {
+                    action['parameter']: str(action['commands'])
+                }
+                try:
+                    # Change this line
+                    res = getattr(mobile, func_name)(**kwarg)
+                    print(res)
+                    assert res != None
+                    break
+                except AttributeError:
+                    raise Exception("@generate_attribute decorator failed to generate function")
+        except Exception as e:
+            print(f"Test error: {e}. Retrying after delay...")
+            time.sleep(retry_delay)

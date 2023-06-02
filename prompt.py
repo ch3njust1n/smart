@@ -1,4 +1,5 @@
 import textwrap
+from typing import Any
 
 """
 Prompt for generating entire functions
@@ -50,6 +51,48 @@ def format_generative_function(code: str) -> str:
  
 	Source code:
 	{code}
+	"""
+    )
+
+
+def format_generative_function_from_input(text: str, kwargs: Any) -> str:
+    kwargs = str(kwargs)
+    return textwrap.dedent(
+        f"""
+	Follow these rules precisely:
+	Do's:
+    Only generate Python code.
+
+	Don'ts:
+	Do not write a driver program.
+	Do not comment. 
+	Do not explain the code. 
+	Do not give a header introducing the code e.g. 'Rewritten source code:'
+	Do not write any code outside of the function body.
+	Do not call the function or return a reference to it.
+	Do not use decorators.
+	Do not print anything!
+	Do not add text before ### BEGIN FUNCTION ###.
+	Do not add text after ### END FUNCTION ###.
+	Stop generating code when you see ### END FUNCTION ###.
+	
+	For example, only do this:
+	```
+	### BEGIN FUNCTION ###
+	def func():
+	\t# function body
+	### END FUNCTION ###
+	```
+	and do not do this:
+	```
+	### BEGIN FUNCTION ###
+	def func():
+	\t# function body
+	### END FUNCTION ###
+	return func()
+	```
+ 
+	Generate a function name: {text} that takes the following parameters: {kwargs}
 	"""
     )
 

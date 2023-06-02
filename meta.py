@@ -8,8 +8,12 @@ from typing import Callable, Any, Optional, Type
 from RestrictedPython import compile_restricted
 from RestrictedPython import safe_globals
 
-from utils import remove_prepended, extract_func_name
-from prompt import format_generative_function, format_stack_trace
+from utils import remove_prepended, extract_func_name, to_func_name
+from prompt import (
+    format_generative_function,
+    format_stack_trace,
+    format_generative_function_from_input,
+)
 
 """
 A decorator that replaces the behavior of the decorated function with arbitrary code.
@@ -221,39 +225,87 @@ Returns:
     generating and executing new attributes.
 """
 
+from typing import Optional, Callable, Type, Any
 
-def generate_attribute(
-    model: Optional[Callable[[str], str]]
-) -> Callable[[Type[Any]], Type[Any]]:
-    def decorator(cls: Any) -> Any:
-        class Wrapper:
+def generate_attribute(model: Optional[Callable[[str], str]]) -> Callable[[Type[Any]], Type[Any]]:
+    def decorator(cls: Type[Any]) -> Type[Any]:
+        class Wrapper(cls):
             def __init__(self, *args, **kwargs):
-                self.wrapped = cls(*args, **kwargs)
+                super().__init__(*args, **kwargs)
 
             def __getattribute__(self, name: str) -> Any:
                 try:
                     # Try to get attribute normally
                     return super().__getattribute__(name)
-                except AttributeError:
-                    if model is not None:
-                        func_source = model("dummy prompt")
-                        func_name = extract_func_name(func_source)
-                        global_vars = {}
-                        byte_code = compile(func_source, "<string>", "exec")
-                        exec(byte_code, global_vars)
+                except AttributeError as e:
+                    def method_not_found(*args, **kwargs):
+                        # If model is specified and callable, use it to generate the output string
+                        if model is not None:
+                            func_name = to_func_name(name)
+                            prompt = format_generative_function_from_input(func_name, kwargs)
+                            func_source = model(prompt)
+                            print(f"Model function generated:\n{func_source}")
+                            return func_source
+                        else:
+                            # If no model is specified, return a default string
+                            return "Default string"
 
-                        try:
-                            generated_func = global_vars[func_name]
-                            # Set the generated function as an attribute of the instance
-                            setattr(self, func_name, generated_func)
-                            # Execute and return the result of the generated function
-                            return generated_func()
-                        except KeyError:
-                            raise AttributeError(f"Unable to generate attribute")
-
+                    return method_not_found
         return Wrapper
-
     return decorator
+
+
+
+# def generate_attribute(
+#     model: Optional[Callable[[str], str]]
+# ) -> Callable[[Type[Any]], Type[Any]]:
+#     def decorator(cls: Any) -> Any:
+#         class Wrapper:
+#             def __init__(self, *args, **kwargs):
+#                 self.wrapped = cls(*args, **kwargs)
+
+#             def __getattribute__(self, name: str) -> Any:
+#                 attr = super(Wrapper, self).__getattribute__(name)
+
+#                 # If this attribute is callable (i.e., it's a method), we need to catch parameters
+#                 print(f"Trying to get attribute '{name}': {callable(attr)} {attr}")
+#                 if callable(attr):
+#                     def newfunc(*args, **kwargs):
+#                         print(f'Calling function "{name}" with positional arguments {args} and keyword arguments {kwargs}')
+
+#                         try:
+#                             return attr(*args, **kwargs)
+#                         except AttributeError as e:
+#                             print(f"AttributeError caught for attribute '{name}'")
+#                             if model is not None:
+#                                 missing_attribute = str(e).split()[-1][1:-1]
+#                                 print(f'Attribute "{missing_attribute}" not found. Generating...')
+#                                 func_name = to_func_name(missing_attribute)
+#                                 print(f'Generating function "{func_name}"...')
+#                                 prompt = format_generative_function_from_input(func_name)
+#                                 func_source = model(prompt)
+#                                 print(f'Generated function source:\n{func_source}')
+#                                 global_vars = {}
+#                                 byte_code = compile(func_source, "<string>", "exec")
+#                                 exec(byte_code, global_vars)
+
+#                                 try:
+#                                     generated_func = global_vars[func_name]
+#                                     print(f"Generated function '{func_name}':\n{inspect.getsource(generated_func)}")
+#                                     # Set the generated function as an attribute of the instance
+#                                     setattr(self, func_name, generated_func)
+#                                     # Execute and return the result of the generated function
+#                                     return generated_func(*args, **kwargs)
+#                                 except KeyError:
+#                                     raise AttributeError(f"Unable to generate attribute")
+#                     return newfunc
+#                 else:
+#                     # If the attribute is not callable, return it as usual
+#                     return attr
+
+#         return Wrapper
+
+#     return decorator
 
 
 class GenerativeMetaClass(type):
