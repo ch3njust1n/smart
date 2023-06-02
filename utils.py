@@ -43,3 +43,17 @@ def extract_func_name(code: str) -> str:
         return match.group(1)
     else:
         raise ValueError("No function definition found in provided code.")
+
+
+def to_func_name(text: str) -> str:
+    # remove leading and trailing whitespace
+    text = text.strip()
+    # convert to lowercase
+    text = text.lower()
+    # remove non-alphanumeric characters and replace spaces with underscores
+    text = re.sub(r"\W+", " ", text).strip().replace(" ", "_")
+    # if it starts with a digit, prefix it with an underscore
+    if text[0].isdigit():
+        text = "_" + text
+
+    return text
