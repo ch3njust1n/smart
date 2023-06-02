@@ -193,7 +193,7 @@ def stack_trace(llm: Optional[Callable[[str], str]] = None) -> Callable:
 
             return wrapper
         else:
-            raise TypeError('Unsupported object type for decoration')
+            raise TypeError("Unsupported object type for decoration")
 
     return decorator
 
