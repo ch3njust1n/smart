@@ -52,7 +52,7 @@ def test_self_healing_with_gpt():
     for _ in range(retry_count):
         try:
 
-            @adapt(llm=gpt)
+            @adapt(model=gpt)
             def fibonacci(n):
                 if n <= 0:
                     return 0
@@ -75,7 +75,7 @@ def test_self_healing_with_claude():
     for _ in range(retry_count):
         try:
 
-            @adapt(llm=claude)
+            @adapt(model=claude)
             def fibonacci(n):
                 if n <= 0:
                     return 0
@@ -98,7 +98,7 @@ def test_adapt_with_gpt():
     for _ in range(retry_count):
         try:
 
-            @adapt(llm=gpt)
+            @adapt(model=gpt)
             def func(a, b):
                 prompt = """
                 Write a complete python 3 function, including the header and
@@ -119,7 +119,7 @@ def test_adapt_with_claude():
     for _ in range(retry_count):
         try:
 
-            @adapt(llm=claude)
+            @adapt(model=claude)
             def func(a, b):
                 prompt = """
                 Write a complete python 3 function, including the header and
@@ -140,7 +140,7 @@ def test_catch_with_gpt():
     for _ in range(retry_count):
         try:
             # Define a function that raises an exception
-            @catch(llm=gpt)
+            @catch(model=gpt)
             def func(a, b):
                 raise Exception("Original function exception")
 
@@ -160,7 +160,7 @@ def test_catch_with_claude():
     for _ in range(retry_count):
         try:
             # Define a function that raises an exception
-            @catch(llm=claude)
+            @catch(model=claude)
             def func(a, b):
                 raise Exception("Original function exception")
 
@@ -180,7 +180,7 @@ def test_func_stack_trace_with_gpt():
     for _ in range(retry_count):
         try:
 
-            @stack_trace(llm=gpt)
+            @stack_trace(model=gpt)
             def funkodunko():
                 items = [1, 2, 3]
                 return items[5]
@@ -203,7 +203,7 @@ def test_stack_trace_with_claude():
     for _ in range(retry_count):
         try:
 
-            @stack_trace(llm=claude)
+            @stack_trace(model=claude)
             def funkodunko():
                 items = [1, 2, 3]
                 return items[5]
@@ -220,7 +220,7 @@ def test_stack_trace_with_claude():
 
 
 def test_class_stack_trace_decorator_with_gpt():
-    @stack_trace(llm=gpt)
+    @stack_trace(model=gpt)
     class DecoratedClass:
         def func(self):
             raise ValueError("Induced exception")

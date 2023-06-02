@@ -33,7 +33,7 @@ pytest -k <test name>
 ```python
 from meta import adapt
 
-@adapt(llm=llm)
+@adapt(model=llm)
 def func(a, b):
    prompt = """
    Write a complete python 3 function, including the header and
@@ -47,7 +47,7 @@ assert func(8) == 21
 ```python
 from meta import catch
 
-@catch(llm=llm)
+@catch(model=llm)
 def func(a, b):
       raise Exception("Original function exception")
 ```
@@ -56,7 +56,7 @@ def func(a, b):
 ```python
 from meta import stack_trace
 
-@stack_trace(llm=llm)
+@stack_trace(model=llm)
 def funkodunko():
       items = [1, 2, 3]
       return items[5]

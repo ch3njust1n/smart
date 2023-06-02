@@ -15,15 +15,15 @@ from prompt import format_generative_function, format_stack_trace
 A decorator that replaces the behavior of the decorated function with arbitrary code.
 
 Args:
-    code (string, optional): A string of Python code that returns a result.
-    llm  (Callable, optional): LLM to generate code.
+    code  (string, optional): A string of Python code that returns a result.
+    model (Callable, optional): LLM to generate code.
 
 Returns:
     A function that wraps the original function, replacing its behavior with the provided code.
 """
 
 
-def adapt(code: str = "", llm: Optional[Callable[[str], str]] = None) -> Callable:
+def adapt(code: str = "", model: Optional[Callable[[str], str]] = None) -> Callable:
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         nonlocal code
         func_source: Optional[str] = None
@@ -31,9 +31,9 @@ def adapt(code: str = "", llm: Optional[Callable[[str], str]] = None) -> Callabl
             # Get the source code of the function
             func_source = inspect.getsource(func)
 
-            if llm:
+            if model:
                 prompt = format_generative_function(func_source)
-                code = llm(prompt)
+                code = model(prompt)
 
         except (TypeError, OSError):
             code = ""
@@ -75,7 +75,7 @@ If the LLM function is absent or its code also raises an exception, the original
 allowing for upstream error handling or user notification.
 
 Args:
-    llm (Callable[[str], str], optional): A function that takes a string of Python code as input and returns a 
+    model (Callable[[str], str], optional): A function that takes a string of Python code as input and returns a 
     string of Python code as output. Typically, this would be a Language Learning Model that can generate 
     alternative implementations of the input function.
 
@@ -85,7 +85,7 @@ Returns:
 """
 
 
-def catch(llm: Optional[Callable[[str], str]] = None) -> Callable:
+def catch(model: Optional[Callable[[str], str]] = None) -> Callable:
     def extract_func_name(code: str) -> str:
         match = re.search(r"def\s+(\w+)", code)
         if match:
@@ -108,9 +108,9 @@ def catch(llm: Optional[Callable[[str], str]] = None) -> Callable:
             except Exception as e:
                 print(f"An exception occurred in the original function: {e}")
                 # If there was an exception, and an LLM is provided, use it
-                if llm and func_source:
+                if model and func_source:
                     prompt = format_generative_function(func_source)
-                    code = llm(func_source)
+                    code = model(func_source)
 
                     if code.strip() != "":
                         global_vars = {
@@ -147,7 +147,7 @@ the stack trace, enhancing error reporting or debugging. In the absence of an LL
 the original exception is propagated.
 
 Args:
-    llm (Callable[[str], str], optional): A function that takes a stack trace as a string 
+    model (Callable[[str], str], optional): A function that takes a stack trace as a string 
         and returns a string to be used as the message for a new exception.
 
 Returns:
@@ -156,7 +156,7 @@ Returns:
 """
 
 
-def stack_trace(llm: Optional[Callable[[str], str]] = None) -> Callable:
+def stack_trace(model: Optional[Callable[[str], str]] = None) -> Callable:
     def decorator(obj: Any) -> Any:
         if isinstance(obj, Type):
 
@@ -179,9 +179,9 @@ def stack_trace(llm: Optional[Callable[[str], str]] = None) -> Callable:
                     stack_trace = traceback.format_exc()
 
                     # If an LLM function is provided, pass the stack trace to it
-                    if llm:
+                    if model:
                         prompt = format_stack_trace(stack_trace)
-                        summary = textwrap.dedent(llm(prompt))
+                        summary = textwrap.dedent(model(prompt))
                         new_exception_message = f"{stack_trace}\n{summary}"
                         print(new_exception_message)
 
