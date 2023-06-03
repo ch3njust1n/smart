@@ -72,8 +72,7 @@ def adapt(code: str = "", model: Optional[Callable[[str], str]] = None) -> Calla
                 return result
 
         # Add a special attribute to the wrapper to indicate it has access to a generative model
-        if model:
-            wrapper._is_generative = True
+        wrapper._is_generative = model != None
 
         return wrapper
 
@@ -149,8 +148,7 @@ def catch(model: Optional[Callable[[str], str]] = None) -> Callable:
             raise
 
         # Add a special attribute to the wrapper to indicate it has access to a generative model
-        if model:
-            wrapper._is_generative = True
+        wrapper._is_generative = model != None
 
         return wrapper
 
@@ -209,8 +207,7 @@ def stack_trace(model: Optional[Callable[[str], str]] = None) -> Callable:
                         raise e from None
 
             # Add a special attribute to the wrapper to indicate it has access to a generative model
-            if model:
-                wrapper._is_generative = True
+            wrapper._is_generative = model != None
 
             return wrapper
         else:

@@ -239,3 +239,19 @@ def test_class_stack_trace_decorator_with_gpt():
         except Exception as e:
             print(f"Test error: {e}. Retrying after delay...")
             time.sleep(retry_delay)
+
+
+def test_is_not_generative():
+    @adapt()
+    def func():
+        pass
+
+    assert not func._is_generative
+
+
+def test_is_generative():
+    @adapt(model=gpt3)
+    def func():
+        pass
+
+    assert func._is_generative
