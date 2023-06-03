@@ -106,4 +106,13 @@ a_good_boy = Doggo('Chewy')
 a_good_boy.set_treat('roast beef')
 ```
 
+### Check which functions are generative
+```python
+import inspect
+all_funcs = inspect.getmembers(
+    cls, predicate=inspect.isfunction
+)
+[f for f in all_funcs if f._is_generative]
+```
+
 ### Code Injection
