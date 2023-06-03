@@ -39,6 +39,7 @@ def model_resp():
         ]
     }
 
+
 @pytest.mark.skip(reason="For illustration purposes only")
 def test_imagined_action_with_gpt(model_resp):
     @generate_attribute(model=gpt4)

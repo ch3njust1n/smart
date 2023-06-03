@@ -87,7 +87,8 @@ def to_func_name(text: str) -> str:
         re.Match: Match object if the word "pass" is found, None otherwise.
 """
 
+
 def is_incomplete_code(input_string):
     # The word boundaries \b ensure we don't match words that contain "pass" as a substring
-    pattern = r'\bpass\b'
+    pattern = r"\bpass\b"
     return re.search(pattern, input_string, re.IGNORECASE)
