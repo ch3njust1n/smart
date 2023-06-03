@@ -1,4 +1,3 @@
-import os
 import re
 import inspect
 import textwrap
@@ -73,7 +72,8 @@ def adapt(code: str = "", model: Optional[Callable[[str], str]] = None) -> Calla
                 return result
 
         # Add a special attribute to the wrapper to indicate it has access to a generative model
-        wrapper._is_generative = True
+        if model:
+            wrapper._is_generative = True
 
         return wrapper
 
@@ -149,7 +149,8 @@ def catch(model: Optional[Callable[[str], str]] = None) -> Callable:
             raise
 
         # Add a special attribute to the wrapper to indicate it has access to a generative model
-        wrapper._is_generative = True
+        if model:
+            wrapper._is_generative = True
 
         return wrapper
 
@@ -208,7 +209,8 @@ def stack_trace(model: Optional[Callable[[str], str]] = None) -> Callable:
                         raise e from None
 
             # Add a special attribute to the wrapper to indicate it has access to a generative model
-            wrapper._is_generative = True
+            if model:
+                wrapper._is_generative = True
 
             return wrapper
         else:
@@ -248,7 +250,8 @@ def generate_attribute(
         class Wrapper(cls):
             def __init__(self, *args, **kwargs):
                 super().__init__(*args, **kwargs)
-                self._is_generative = True
+                if model:
+                    self._is_generative = True
 
             def __getattribute__(self, name: str) -> Any:
                 try:
