@@ -6,7 +6,6 @@ import traceback
 from typing import Callable, Any, Optional, Type
 
 from RestrictedPython import compile_restricted
-from RestrictedPython import safe_globals
 
 from utils import remove_prepended, extract_func_name, to_func_name, is_incomplete_code
 from prompt import (
@@ -14,6 +13,7 @@ from prompt import (
     format_stack_trace,
     format_generative_function_from_input,
 )
+from pprint import pprint
 
 """
 A decorator that replaces the behavior of the decorated function with arbitrary code.
@@ -34,24 +34,30 @@ def adapt(code: str = "", model: Optional[Callable[[str], str]] = None) -> Calla
         try:
             # Get the source code of the function
             func_source = inspect.getsource(func)
-
-            if model:
-                prompt = format_generative_function(func_source)
-                code = model(prompt)
-
         except (TypeError, OSError):
             code = ""
 
-        def wrapper(*args: Any, **kwargs: Any) -> Any:
+        def wrapper(self, *args: Any, **kwargs: Any) -> Any:
             nonlocal code
-            if code.strip() == "":
-                return func(*args, **kwargs)
-            else:
-                global_vars = {
-                    "func_source": func_source,
-                }
 
+            # Here, we can access `self` and get all functions of its class
+            class_functions = inspect.getmembers(
+                self.__class__, predicate=inspect.isfunction
+            )
+
+            if model:
+                # Format the generative function here, inside the wrapper, where you have access to `self`
+                prompt = format_generative_function(func_source, class_functions)
+                code = model(prompt)
+
+            if code.strip() == "":
+                return func(self, *args, **kwargs)
+            else:
                 # TODO: sanitize given function using traditional methods and LLM
+                # It's recommended to use RestrictedPython.safe_globals to whitelist the global namespace
+                # global_vars = {} allows all global variables to be accessed.
+                # However, using RestrictedPython.safe_globals prevents many common functions from being implemented by the LLM.
+                global_vars = {}
                 code = remove_prepended(code)
                 code = textwrap.dedent(code)
                 byte_code = compile_restricted(code, mode="exec")
@@ -62,9 +68,12 @@ def adapt(code: str = "", model: Optional[Callable[[str], str]] = None) -> Calla
                 generative_func = global_vars[func_name]
 
                 # TODO: sanitize result
-                result = generative_func(*args, **kwargs)
+                result = generative_func(self, *args, **kwargs)
 
                 return result
+
+        # Add a special attribute to the wrapper to indicate it has access to a generative model
+        wrapper._is_generative = True
 
         return wrapper
 
@@ -139,6 +148,9 @@ def catch(model: Optional[Callable[[str], str]] = None) -> Callable:
             # If there was an exception, and no LLM is provided, or if the LLM fails, re-raise the original exception
             raise
 
+        # Add a special attribute to the wrapper to indicate it has access to a generative model
+        wrapper._is_generative = True
+
         return wrapper
 
     return decorator
@@ -195,6 +207,9 @@ def stack_trace(model: Optional[Callable[[str], str]] = None) -> Callable:
                         # If no LLM function is provided, just re-raise the original exception
                         raise e from None
 
+            # Add a special attribute to the wrapper to indicate it has access to a generative model
+            wrapper._is_generative = True
+
             return wrapper
         else:
             raise TypeError("Unsupported object type for decoration")
@@ -233,6 +248,7 @@ def generate_attribute(
         class Wrapper(cls):
             def __init__(self, *args, **kwargs):
                 super().__init__(*args, **kwargs)
+                self._is_generative = True
 
             def __getattribute__(self, name: str) -> Any:
                 try:
@@ -256,8 +272,6 @@ def generate_attribute(
                                 )
                                 for method in all_methods
                             ]
-
-                            print(available_funcs)
 
                             func_name = to_func_name(name)
                             prompt = format_generative_function_from_input(
@@ -283,10 +297,16 @@ def generate_attribute(
 class GenerativeMetaClass(type):
     def __init__(cls, name, bases, attrs):
         super().__init__(name, bases, attrs)
+        cls.is_generative = False
 
     @staticmethod
     def generate(cls: Type["GenerativeMetaClass"], code: str):
-        local_dict = {}
-        exec(code, {}, local_dict)
+        cls.is_generative = True
+        local_vars = {}
+
+        code = remove_prepended(code)
+        code = textwrap.dedent(code)
         func_name = extract_func_name(code)
-        setattr(cls, func_name, local_dict[func_name])
+        byte_code = compile(code, filename=func_name, mode="exec")
+        exec(byte_code, {}, local_vars)
+        setattr(cls, func_name, local_vars[func_name])

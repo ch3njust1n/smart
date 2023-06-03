@@ -16,6 +16,9 @@ Returns:
 def format_generative_function(code: str, context: List[Tuple[str, str]]) -> str:
     return textwrap.dedent(
         f"""
+    The given source code is potentially broken.
+    Please rewrite the function using the available functions.
+    
 	Follow these rules precisely:
 	Do's:
     Only generate Python code.
