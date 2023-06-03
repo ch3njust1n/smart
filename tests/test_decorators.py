@@ -1,7 +1,7 @@
 # Demo code for dynamic metaprogramming decorator
 import time
 from meta import adapt, catch, stack_trace
-from model import gpt, claude
+from model import gpt3, gpt4, claude
 
 
 def test_add():
@@ -52,7 +52,7 @@ def test_self_healing_with_gpt():
     for _ in range(retry_count):
         try:
 
-            @adapt(model=gpt)
+            @adapt(model=gpt4)
             def fibonacci(n):
                 if n <= 0:
                     return 0
@@ -98,7 +98,7 @@ def test_adapt_with_gpt():
     for _ in range(retry_count):
         try:
 
-            @adapt(model=gpt)
+            @adapt(model=gpt4)
             def func(a, b):
                 prompt = """
                 Write a complete python 3 function, including the header and
@@ -140,7 +140,7 @@ def test_catch_with_gpt():
     for _ in range(retry_count):
         try:
             # Define a function that raises an exception
-            @catch(model=gpt)
+            @catch(model=gpt4)
             def func(a, b):
                 raise Exception("Original function exception")
 
@@ -180,7 +180,7 @@ def test_func_stack_trace_with_gpt():
     for _ in range(retry_count):
         try:
 
-            @stack_trace(model=gpt)
+            @stack_trace(model=gpt4)
             def funkodunko():
                 items = [1, 2, 3]
                 return items[5]
@@ -220,7 +220,7 @@ def test_stack_trace_with_claude():
 
 
 def test_class_stack_trace_decorator_with_gpt():
-    @stack_trace(model=gpt)
+    @stack_trace(model=gpt4)
     class DecoratedClass:
         def func(self):
             raise ValueError("Induced exception")

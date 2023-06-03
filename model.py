@@ -10,6 +10,39 @@ from dotenv import load_dotenv
 load_dotenv()
 
 """
+OpenAI Chat Completion API wrapper
+
+Args:
+    prompt (string): The source code as context for function to replace.
+
+Returns:
+    Source code of the generated function.
+"""
+
+
+def gpt4(prompt: str) -> str:
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+
+    if openai.api_key is None:
+        raise ValueError(
+            "The OPENAI_API_KEY environment variable is not set. Please provide your OpenAI API key."
+        )
+
+    messages = [
+        {"role": "system", "content": "You are an elite Python programmer."},
+        {"role": "user", "content": prompt},
+    ]
+
+    llm_code = openai.ChatCompletion.create(
+        model=os.getenv("OPENAI_MODEL_GPT4"),
+        messages=messages,
+        temperature=float(os.getenv("TEMPERATURE", 0.7)),
+    )
+
+    return llm_code.choices[0].message.content
+
+
+"""
 OpenAI Completion API wrapper
 
 Args:
@@ -20,7 +53,7 @@ Returns:
 """
 
 
-def gpt(prompt: str) -> str:
+def gpt3(prompt: str) -> str:
     openai.api_key = os.getenv("OPENAI_API_KEY")
 
     if openai.api_key is None:
@@ -36,6 +69,17 @@ def gpt(prompt: str) -> str:
     )
 
     return llm_code.choices[0].text
+
+
+"""
+Claude API wrapper
+
+Args:
+    prompt (string): The source code as context for function to replace.
+
+Returns:
+    Source code of the generated function.
+"""
 
 
 def claude(prompt: str) -> str:

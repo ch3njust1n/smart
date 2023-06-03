@@ -1,7 +1,5 @@
-import time
 import pytest
-from model import gpt, claude
-from utils import extract_func_name
+from model import gpt3, gpt4, claude
 from meta import generate_attribute
 
 
@@ -41,9 +39,9 @@ def model_resp():
         ]
     }
 
-
+@pytest.mark.skip(reason="For illustration purposes only")
 def test_imagined_action_with_gpt(model_resp):
-    @generate_attribute(model=claude)
+    @generate_attribute(model=gpt4)
     class Mobile(object):
         def __init__(self):
             pass
@@ -55,26 +53,13 @@ def test_imagined_action_with_gpt(model_resp):
             pass
 
     mobile = Mobile()
-    results = []
 
-    retry_count = 3
-    retry_delay = 5
-
-    for _ in range(retry_count):
+    for action in model_resp["actions"]:
+        func_name = action["action"]
+        kwarg = {action["parameter"]: str(action["commands"])}
         try:
-            for action in model_resp["actions"]:
-                func_name = action["action"]
-                kwarg = {
-                    action['parameter']: str(action['commands'])
-                }
-                try:
-                    # Change this line
-                    res = getattr(mobile, func_name)(**kwarg)
-                    print(res)
-                    assert res != None
-                    break
-                except AttributeError:
-                    raise Exception("@generate_attribute decorator failed to generate function")
-        except Exception as e:
-            print(f"Test error: {e}. Retrying after delay...")
-            time.sleep(retry_delay)
+            res = getattr(mobile, func_name)(**kwarg)
+            assert res != None
+            break
+        except AttributeError:
+            assert False

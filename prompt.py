@@ -1,18 +1,19 @@
 import textwrap
-from typing import Any
+from typing import Any, List, Tuple
 
 """
 Prompt for generating entire functions
 
 Args:
-    code (string): Source code fo function to be appended to prompt.
+    code    (string): Source code fo function to be appended to prompt.
+    context (list):   List of tuples of available functions.
     
 Returns:
     Prompt for generating a function.
 """
 
 
-def format_generative_function(code: str) -> str:
+def format_generative_function(code: str, context: List[Tuple[str, str]]) -> str:
     return textwrap.dedent(
         f"""
 	Follow these rules precisely:
@@ -29,6 +30,8 @@ def format_generative_function(code: str) -> str:
 	Do not call the function or return a reference to it.
 	Do not use decorators.
 	Do not print anything!
+    Do not repeat code that you already generated.
+    Do not use functions that are not in the available functions list!
 	Do not add text before ### BEGIN FUNCTION ###.
 	Do not add text after ### END FUNCTION ###.
 	Stop generating code when you see ### END FUNCTION ###.
@@ -48,6 +51,12 @@ def format_generative_function(code: str) -> str:
 	### END FUNCTION ###
 	return func()
 	```
+    
+    You can only use avaiable functions to generate code.
+    The functions are given in a list of tuples. 
+    The first element is the function name.
+    The second element is the function source.
+	Available functions: {context}
  
 	Source code:
 	{code}
@@ -55,7 +64,21 @@ def format_generative_function(code: str) -> str:
     )
 
 
-def format_generative_function_from_input(text: str, kwargs: Any) -> str:
+"""
+Prompt for generating entire functions
+
+Args:
+    code    (string): Source code fo function to be appended to prompt.
+    context (list):   List of tuples of available functions.
+    
+Returns:
+    Prompt for generating a function.
+"""
+
+
+def format_generative_function_from_input(
+    text: str, kwargs: Any, context: List[Tuple[str, str]]
+) -> str:
     kwargs = str(kwargs)
     return textwrap.dedent(
         f"""
@@ -72,6 +95,8 @@ def format_generative_function_from_input(text: str, kwargs: Any) -> str:
 	Do not call the function or return a reference to it.
 	Do not use decorators.
 	Do not print anything!
+    Do not repeat code that you already generated.
+    Do not use functions that are not in the available functions list!
 	Do not add text before ### BEGIN FUNCTION ###.
 	Do not add text after ### END FUNCTION ###.
 	Stop generating code when you see ### END FUNCTION ###.
@@ -91,7 +116,13 @@ def format_generative_function_from_input(text: str, kwargs: Any) -> str:
 	### END FUNCTION ###
 	return func()
 	```
- 
+    
+    You can only use avaiable functions to generate code.
+    The functions are given in a list of tuples. 
+    The first element is the function name.
+    The second element is the function source.
+	Available functions: {context}
+    
 	Generate a function name: {text} that takes the following parameters: {kwargs}
 	"""
     )
