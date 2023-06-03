@@ -63,7 +63,7 @@ def funkodunko():
 ```
 
 Produces a human-readable summary of the stack trace:
-```
+```bash
 tests/test_adapt_decorator.py Traceback (most recent call last):
   File "/Users/justin/Documents/dev/personal/ml/dynamic-mp-llm/meta.py", line 167, in wrapper
     return func(*args, **kwargs)
@@ -86,7 +86,7 @@ Suggestions for how to fix the error:
 ### Metaclasses
 
 Define your class:
-```
+```python
 from model import gpt
 from meta import GenerativeMetaClass
 from prompt import format_generative_function
