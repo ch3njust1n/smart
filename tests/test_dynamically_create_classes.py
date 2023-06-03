@@ -1,6 +1,6 @@
 import time
 import textwrap
-from model import gpt, claude
+from model import gpt3, gpt4, claude
 
 
 def test_generated_class():
@@ -61,7 +61,7 @@ def test_generated_stringified_class_with_gpt():
             Do not add any additional information.
             Just repeat the JSON back to me exactly.
             """
-            properties = textwrap.dedent(gpt(prompt))
+            properties = textwrap.dedent(gpt4(prompt))
             properties = eval(properties)
             global_vars = {}
             func_source = properties["my_func"]

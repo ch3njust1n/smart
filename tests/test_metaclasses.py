@@ -3,7 +3,7 @@ import time
 from io import StringIO
 
 from metaclasses.demo import Car, Doggo, GenerativeMetaClass
-from model import gpt, claude
+from model import gpt3, gpt4, claude
 from prompt import format_generative_function
 
 
@@ -32,7 +32,7 @@ def test_generative_metaclass_with_gpt():
         try:
             prompt = "Write a function with the header `def do_trick(self)` that returns a string '*sit*'"
             prompt = format_generative_function(prompt)
-            new_trick = gpt(prompt)
+            new_trick = gpt4(prompt)
             GenerativeMetaClass.generate(Doggo, new_trick)
             a_good_boy = Doggo("Chewy")
             assert a_good_boy.do_trick() == "*sit*"
