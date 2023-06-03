@@ -72,6 +72,9 @@ def adapt(code: str = "", model: Optional[Callable[[str], str]] = None) -> Calla
 
                 return result
 
+        # Add a special attribute to the wrapper to indicate it has access to a generative model
+        wrapper._is_generative = True
+
         return wrapper
 
     return decorator
@@ -145,6 +148,9 @@ def catch(model: Optional[Callable[[str], str]] = None) -> Callable:
             # If there was an exception, and no LLM is provided, or if the LLM fails, re-raise the original exception
             raise
 
+        # Add a special attribute to the wrapper to indicate it has access to a generative model
+        wrapper._is_generative = True
+
         return wrapper
 
     return decorator
@@ -201,6 +207,9 @@ def stack_trace(model: Optional[Callable[[str], str]] = None) -> Callable:
                         # If no LLM function is provided, just re-raise the original exception
                         raise e from None
 
+            # Add a special attribute to the wrapper to indicate it has access to a generative model
+            wrapper._is_generative = True
+
             return wrapper
         else:
             raise TypeError("Unsupported object type for decoration")
@@ -239,6 +248,7 @@ def generate_attribute(
         class Wrapper(cls):
             def __init__(self, *args, **kwargs):
                 super().__init__(*args, **kwargs)
+                self._is_generative = True
 
             def __getattribute__(self, name: str) -> Any:
                 try:
@@ -287,9 +297,11 @@ def generate_attribute(
 class GenerativeMetaClass(type):
     def __init__(cls, name, bases, attrs):
         super().__init__(name, bases, attrs)
+        cls.is_generative = False
 
     @staticmethod
     def generate(cls: Type["GenerativeMetaClass"], code: str):
+        cls.is_generative = True
         local_vars = {}
 
         code = remove_prepended(code)
