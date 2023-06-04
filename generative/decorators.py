@@ -141,7 +141,6 @@ def catch(model: Optional[Callable[[str], str]] = None) -> Callable:
                 # Execute the original function first
                 return func(*args, **kwargs)
             except Exception as e:
-                print(f"An exception occurred in the original function: {e}")
                 # If there was an exception, and an LLM is provided, use it
                 if model and func_source:
                     prompt = format_generative_function(func_source)
@@ -222,7 +221,6 @@ def stack_trace(model: Optional[Callable[[str], str]] = None) -> Callable:
                         prompt = format_stack_trace(stack_trace)
                         summary = textwrap.dedent(model(prompt))
                         new_exception_message = f"{stack_trace}\n{summary}"
-                        print(new_exception_message)
 
                         # Raise a new exception with the modified message
                         raise Exception(new_exception_message) from None
@@ -304,7 +302,6 @@ def generate_attribute(
                                 func_name, kwargs, context=available_funcs
                             )
                             func_source = model(prompt)
-                            print(f"Model function generated:\n{func_source}")
 
                             if is_incomplete_code(func_source):
                                 raise exception

@@ -61,7 +61,6 @@ def test_incorrect_zerodivisionerror(model):
         x = 5 / 0
     except ZeroDivisionError:
         x = 0
-    print(x)
     """
 
     prompt = format_semantic_checker(code, input, context="")
