@@ -1,5 +1,5 @@
 import pytest
-from model import gpt4
+from .model import gpt4
 from generative.decorators import generate_attribute
 
 

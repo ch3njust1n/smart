@@ -1,7 +1,7 @@
 import time
 import pytest
 import textwrap
-from model import gpt4, claude
+from .model import gpt4, claude
 
 
 def test_generated_class():

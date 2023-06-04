@@ -2,9 +2,9 @@ import sys
 import time
 from io import StringIO
 
-from generative.metaclasses import GenerativeMetaClass
 from .metaclasses.demo import Car, Doggo
-from model import gpt4
+from .model import gpt4
+from generative.metaclasses import GenerativeMetaClass
 from generative.prompt import format_generative_function
 
 
