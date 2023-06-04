@@ -59,7 +59,8 @@ def adapt(
             is_semantically_correct = False
 
             if model:
-                # Format the generative function here, inside the wrapper, where you have access to `self`
+                # Format the generative function here, inside the wrapper,
+                # where you have access to `self`
                 prompt = format_generative_function(func_source, class_functions)
                 code = model(prompt)
 
@@ -72,9 +73,11 @@ def adapt(
                 return func(self, *args, **kwargs)
             else:
                 # TODO: sanitize given function using traditional methods and LLM
-                # It's recommended to use RestrictedPython.safe_globals to whitelist the global namespace
+                # It's recommended to use RestrictedPython.safe_globals to whitelist
+                # the global namespace
                 # global_vars = {} allows all global variables to be accessed.
-                # However, using RestrictedPython.safe_globals prevents many common functions from being implemented by the LLM.
+                # However, using RestrictedPython.safe_globals prevents many common functions
+                # from being implemented by the LLM.
                 global_vars = {}
                 code = remove_prepended(code)
                 code = textwrap.dedent(code)
@@ -91,7 +94,7 @@ def adapt(
                 return result
 
         # Add a special attribute to the wrapper to indicate it has access to a generative model
-        wrapper._is_generative = model != None
+        wrapper._is_generative = model is not None
 
         return wrapper
 
@@ -99,20 +102,21 @@ def adapt(
 
 
 """
-The `catch` decorator captures exceptions from the decorated function. An optional Language Learning 
-Model (LLM) function can be passed to generate replacement code in the event of an exception. 
+The `catch` decorator captures exceptions from the decorated function. An optional Language
+Learning Model (LLM) function can be passed to generate replacement code in the event of an
+exception.
 
-If the LLM function is absent or its code also raises an exception, the original exception gets re-raised, 
-allowing for upstream error handling or user notification.
+If the LLM function is absent or its code also raises an exception, the original exception gets
+re-raised, allowing for upstream error handling or user notification.
 
 Args:
-    model (Callable[[str], str], optional): A function that takes a string of Python code as input and returns a 
-    string of Python code as output. Typically, this would be a Language Learning Model that can generate 
-    alternative implementations of the input function.
+    model (Callable[[str], str], optional): A function that takes a string of Python code as input
+    and returns a string of Python code as output. Typically, this would be a Language Learning
+    Model that can generate alternative implementations of the input function.
 
 Returns:
-    A function that wraps the original function, catching any exceptions that it raises, and optionally replacing 
-    its behavior with LLM-generated code in the event of an exception.
+    A function that wraps the original function, catching any exceptions that it raises, and
+    optionally replacing its behavior with LLM-generated code in the event of an exception.
 """
 
 
@@ -163,11 +167,12 @@ def catch(model: Optional[Callable[[str], str]] = None) -> Callable:
 
                         return result
 
-            # If there was an exception, and no LLM is provided, or if the LLM fails, re-raise the original exception
+            # If there was an exception, and no LLM is provided, or if the LLM fails, re-raise the
+            # original exception
             raise
 
         # Add a special attribute to the wrapper to indicate it has access to a generative model
-        wrapper._is_generative = model != None
+        wrapper._is_generative = model is not None
 
         return wrapper
 
@@ -175,17 +180,17 @@ def catch(model: Optional[Callable[[str], str]] = None) -> Callable:
 
 
 """
-A decorator that intercepts exceptions from a decorated function, feeding the stack trace to an 
-optional Language Learning Model (LLM). The LLM, if present, crafts a new exception message from 
-the stack trace, enhancing error reporting or debugging. In the absence of an LLM or if the LLM fails, 
-the original exception is propagated.
+A decorator that intercepts exceptions from a decorated function, feeding the stack trace to an
+optional Language Learning Model (LLM). The LLM, if present, crafts a new exception message from
+the stack trace, enhancing error reporting or debugging. In the absence of an LLM or if the LLM
+fails, the original exception is propagated.
 
 Args:
-    model (Callable[[str], str], optional): A function that takes a stack trace as a string 
+    model (Callable[[str], str], optional): A function that takes a stack trace as a string
         and returns a string to be used as the message for a new exception.
 
 Returns:
-    Callable: A new function that wraps the original one, adding exception handling 
+    Callable: A new function that wraps the original one, adding exception handling
         capabilities as described above.
 """
 
@@ -226,7 +231,7 @@ def stack_trace(model: Optional[Callable[[str], str]] = None) -> Callable:
                         raise e from None
 
             # Add a special attribute to the wrapper to indicate it has access to a generative model
-            wrapper._is_generative = model != None
+            wrapper._is_generative = model is not None
 
             return wrapper
         else:
@@ -239,22 +244,23 @@ def stack_trace(model: Optional[Callable[[str], str]] = None) -> Callable:
 A decorator that allows for dynamic generation and execution of class attributes.
 
 This decorator takes a function (model) that generates Python code in response to a prompt.
-When an attempt is made to access an attribute that doesn't exist on an instance of the decorated class, 
-the decorator calls the provided model function to generate Python code. The decorator then compiles 
-and executes this code to define a new function. The newly defined function is immediately invoked
-and its result is returned as the value of the attribute. 
+When an attempt is made to access an attribute that doesn't exist on an instance of the decorated
+class, the decorator calls the provided model function to generate Python code. The decorator then
+compiles and executes this code to define a new function. The newly defined function is immediately
+invoked and its result is returned as the value of the attribute.
 
-This new attribute is also added to the instance of the decorated class, so on subsequent attempts 
-to access it, the attribute exists and the saved value is returned without the need for regenerating 
-and re-executing the function. 
+This new attribute is also added to the instance of the decorated class, so on subsequent attempts
+to access it, the attribute exists and the saved value is returned without the need for regenerating
+and re-executing the function.
 
-Note: The generated function does not accept any arguments, as it's called immediately upon being defined. 
+Note: The generated function does not accept any arguments, as it's called immediately upon being
+defined.
 
 Args:
     model: A function that takes a string prompt and returns a string of Python code.
 
 Returns:
-    A class decorator that can be used to decorate a class, with the added capability of dynamically 
+    A class decorator that can be used to decorate a class, with the added capability of dynamically
     generating and executing new attributes.
 """
 
@@ -279,8 +285,9 @@ def generate_attribute(
                     def method_not_found(*args, **kwargs):
                         # If model is specified and callable, use it to generate the output string
                         if model is not None:
-                            # This will return a list of tuples where the first item is the name of the method
-                            # and the second item is the method itself. If you only want the names, you can do:
+                            # This will return a list of tuples where the first item is the name of
+                            # the method and the second item is the method itself. If you only want
+                            # the names, you can do:
                             all_methods = inspect.getmembers(
                                 cls, predicate=inspect.isfunction
                             )
@@ -304,7 +311,7 @@ def generate_attribute(
 
                             return func_source
                         else:
-                            raise e
+                            raise exception
 
                     return method_not_found
 
