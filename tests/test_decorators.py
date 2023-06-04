@@ -52,7 +52,7 @@ def test_self_healing_with_gpt():
     for _ in range(retry_count):
         try:
 
-            @adapt(model=gpt4)
+            @adapt(model=gpt4, critic=claude)
             def fibonacci(n):
                 if n <= 0:
                     return 0
@@ -75,7 +75,7 @@ def test_self_healing_with_claude():
     for _ in range(retry_count):
         try:
 
-            @adapt(model=claude)
+            @adapt(model=claude, critic=gpt3)
             def fibonacci(n):
                 if n <= 0:
                     return 0
@@ -98,7 +98,7 @@ def test_adapt_with_gpt():
     for _ in range(retry_count):
         try:
 
-            @adapt(model=gpt4)
+            @adapt(model=gpt4, critic=claude)
             def func(a, b):
                 prompt = """
                 Write a complete python 3 function, including the header and
@@ -119,7 +119,7 @@ def test_adapt_with_claude():
     for _ in range(retry_count):
         try:
 
-            @adapt(model=claude)
+            @adapt(model=claude, critic=gpt3)
             def func(a, b):
                 prompt = """
                 Write a complete python 3 function, including the header and

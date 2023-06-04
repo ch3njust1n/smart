@@ -165,3 +165,43 @@ def format_stack_trace(text: str) -> str:
 	{text}
 	"""
     )
+
+
+"""
+Prompt for checking semantic correctness of code.
+
+Args:
+    code  (string): Stack trace to be appended to prompt.
+    input (Any, optional): Input to the function.
+    context (string, optional): Context of the codebase.
+    
+Returns:
+    Prompt for semantically checking generated code.
+"""
+
+
+def format_semantic_checker(code: str, input: Any = "", context: str = "") -> str:
+    return textwrap.dedent(
+        f"""
+    You are a python interpreter that can execute pseudocode.
+	Execute the following pseudocode and return the output only!
+    Do not explain the code.
+    Do not explain the output.
+    Consider if the function name matches the functionality.
+    Run the code in your mind and determine if it semantically makes sense.
+    Just execute the pseudo code and return the output.
+    
+    def is_semantically_correct(code: str, input: Any='', context: str='') -> bool:
+    	purpose_of_code = summarize_purpose_of_code_and_find_bugs(code, context)
+		if input == '':
+			return True (code, purpose_of_code) is semantically correct else False
+        elif context == '':
+			return True (code, input) is semantically correct else False
+        elif input == '' and context == '':
+			return True (code) is semantically correct else False
+        else:
+			return True (code, input, purpose_of_code) is semantically correct else False
+			
+    is_semantically_correct('{code}', '{str(input)}', '{context}') # return True or False
+	"""
+    )

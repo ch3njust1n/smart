@@ -92,3 +92,31 @@ def is_incomplete_code(input_string):
     # The word boundaries \b ensure we don't match words that contain "pass" as a substring
     pattern = r"\bpass\b"
     return re.search(pattern, input_string, re.IGNORECASE)
+
+
+"""
+Extracts the word "true" or "false" from the input string, removes all spaces, newlines, tabs, and punctuation,
+and formats the extracted word to have the first letter capitalized.
+
+Args:
+    input_str (str): The input string to extract the boolean value from.
+
+Returns:
+    str: The extracted boolean value with the first letter capitalized.
+
+Raises:
+    ValueError: If no boolean value is found in the input string.
+"""
+
+
+def format_binary_output(input_str: str) -> bool:
+    # Remove all non-word characters
+    input_str = re.sub(r"[^\w\s]", "", input_str)
+
+    # Extract the word "true" or "false"
+    match = re.search(r"\b(true|false)\b", input_str.lower())
+    if match:
+        # Format the extracted word to have the first letter capitalized
+        return match.group(1).capitalize() == "True"
+    else:
+        raise ValueError("No boolean value found in input string")
