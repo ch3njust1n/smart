@@ -1,7 +1,7 @@
 # Demo code for dynamic metaprogramming decorator
 import time
-from meta import adapt, catch, stack_trace
-from model import gpt3, gpt4, claude
+from generative.decorators import adapt, catch, stack_trace
+from .model import gpt3, gpt4, claude
 
 
 def test_add():

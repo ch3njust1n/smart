@@ -1,4 +1,4 @@
-from utils import to_func_name
+from generative.utils import to_func_name
 
 
 def test_to_func_name():

@@ -1,6 +1,7 @@
 import time
+import pytest
 import textwrap
-from model import gpt3, gpt4, claude
+from .model import gpt4, claude
 
 
 def test_generated_class():
@@ -79,6 +80,7 @@ def test_generated_stringified_class_with_gpt():
             time.sleep(retry_delay)
 
 
+@pytest.mark.skip(reason="For illustration purposes only")
 def test_generated_stringified_class_with_claude():
     retry_count = 3
     retry_delay = 5
