@@ -6,7 +6,7 @@ Metaprogramming with safe code injection from [generative APIs](https://github.c
 2. Add your API key
 3. `pip install -e ".[dev]"`
 
-To run all unit tests. 
+To run all unit tests.
 
 **Options:**
 - `-s` shows print statements
@@ -25,6 +25,35 @@ pytest <file name>
 To run a specific unit test:
 ```bash
 pytest -k <test name>
+```
+
+4. Linting and VSCode
+
+To setup linting with `flake8` and auto formatting with `black`:
+4.1. Create the subdirectory `.vscode` in the root directory
+4.2. Add the following `settings.json` file:
+```json
+{
+    "editor.formatOnSave": true,
+    "python.formatting.provider": "none",
+    "python.formatting.blackArgs": [
+        "--line-length",
+        "100"
+    ],
+    "python.linting.enabled": true,
+    "python.linting.lintOnSave": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Args": [
+        "--line-length",
+        "100"
+    ],
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        },
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    }
+}
 ```
 
 ### Decorator usage
@@ -81,10 +110,10 @@ IndexError: list index out of range
 
 
 Human-readable summary:
-(funkodunko) Attempted to access an element of a list that does not exist. 
+(funkodunko) Attempted to access an element of a list that does not exist.
 
 Suggestions for how to fix the error:
-1. Check the length of the list to make sure there are enough elements to access the desired index. 
+1. Check the length of the list to make sure there are enough elements to access the desired index.
 2. If the list is too short, add elements to the list in order to access the desired index.
 3. If the list is empty, consider initializing the list with data.
 ```
