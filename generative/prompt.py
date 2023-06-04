@@ -13,7 +13,7 @@ Returns:
 """
 
 
-def format_generative_function(code: str, context: List[Tuple[str, str]]) -> str:
+def format_generative_function(code: str, context: List[Tuple[str, str]] = []) -> str:
     return textwrap.dedent(
         f"""
     The given source code is potentially broken.
@@ -72,7 +72,8 @@ Prompt for generating entire functions
 
 Args:
     code    (string): Source code fo function to be appended to prompt.
-    context (list):   List of tuples of available functions.
+    kwargs  (Any): Parameters of function to be generated.
+    context (list, optional): List of tuples of available functions.
 
 Returns:
     Prompt for generating a function.
@@ -80,7 +81,7 @@ Returns:
 
 
 def format_generative_function_from_input(
-    text: str, kwargs: Any, context: List[Tuple[str, str]]
+    text: str, kwargs: Any, context: List[Tuple[str, str]] = []
 ) -> str:
     kwargs = str(kwargs)
     return textwrap.dedent(
