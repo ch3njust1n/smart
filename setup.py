@@ -12,8 +12,9 @@ setup(
     ],
     extras_require={
         "dev": [
-            "pytest>=7.3.1",
             "flake8>=6.0.0",
+            "pre-commit>=3.3.2",
+            "pytest>=7.3.1",
         ]
     },
     package_data={"generative": ["py.typed"]},
