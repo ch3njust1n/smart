@@ -13,6 +13,7 @@ setup(
     extras_require={
         "dev": [
             "pytest>=7.3.1",
+            "flake8>=6.0.0",
         ]
     },
     package_data={"generative": ["py.typed"]},
