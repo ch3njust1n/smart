@@ -117,6 +117,6 @@ def format_binary_output(input_str: str) -> bool:
     match = re.search(r"\b(true|false)\b", input_str.lower())
     if match:
         # Format the extracted word to have the first letter capitalized
-        return bool(match.group(1).capitalize())
+        return match.group(1).capitalize() == "True"
     else:
         raise ValueError("No boolean value found in input string")

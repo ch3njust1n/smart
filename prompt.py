@@ -185,17 +185,23 @@ def format_semantic_checker(code: str, input: Any = "", context: str = "") -> st
         f"""
     You are a python interpreter that can execute pseudocode.
 	Execute the following pseudocode and return the output only!
+    Do not explain the code.
+    Do not explain the output.
+    Consider if the function name matches the functionality.
+    Run the code in your mind and determine if it semantically makes sense.
+    Just execute the pseudo code and return the output.
     
     def is_semantically_correct(code: str, input: Any='', context: str='') -> bool:
+    	purpose_of_code = summarize_purpose_of_code_and_find_bugs(code, context)
 		if input == '':
-			return True (code, context) is semantically correct else False
+			return True (code, purpose_of_code) is semantically correct else False
         elif context == '':
 			return True (code, input) is semantically correct else False
         elif input == '' and context == '':
 			return True (code) is semantically correct else False
         else:
-			return True (code, input, context) is semantically correct else False
+			return True (code, input, purpose_of_code) is semantically correct else False
 			
-    is_semantically_correct({code}, '{str(input)}', '{context}')
+    is_semantically_correct('{code}', '{str(input)}', '{context}') # return True or False
 	"""
     )
