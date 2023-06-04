@@ -6,13 +6,20 @@ from typing import Callable, Any, Optional, Type
 
 from RestrictedPython import compile_restricted
 
-from utils import remove_prepended, extract_func_name, to_func_name, is_incomplete_code
+from utils import (
+    remove_prepended,
+    extract_func_name,
+    to_func_name,
+    is_incomplete_code,
+    format_binary_output,
+)
+
 from prompt import (
     format_generative_function,
     format_stack_trace,
     format_generative_function_from_input,
+    format_semantic_checker,
 )
-from pprint import pprint
 
 """
 A decorator that replaces the behavior of the decorated function with arbitrary code.
@@ -20,13 +27,18 @@ A decorator that replaces the behavior of the decorated function with arbitrary 
 Args:
     code  (string, optional): A string of Python code that returns a result.
     model (Callable, optional): LLM to generate code.
+    critic (Callable, optional): LLM to review generated code from `model`.
 
 Returns:
     A function that wraps the original function, replacing its behavior with the provided code.
 """
 
 
-def adapt(code: str = "", model: Optional[Callable[[str], str]] = None) -> Callable:
+def adapt(
+    code: str = "",
+    model: Optional[Callable[[str], str]] = None,
+    critic: Optional[Callable[[str], str]] = None,
+) -> Callable:
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         nonlocal code
         func_source: Optional[str] = None
@@ -44,12 +56,19 @@ def adapt(code: str = "", model: Optional[Callable[[str], str]] = None) -> Calla
                 self.__class__, predicate=inspect.isfunction
             )
 
+            is_semantically_correct = False
+
             if model:
                 # Format the generative function here, inside the wrapper, where you have access to `self`
                 prompt = format_generative_function(func_source, class_functions)
                 code = model(prompt)
 
-            if code.strip() == "":
+                if critic:
+                    prompt = format_semantic_checker(code, input="", context="")
+                    output = critic(prompt)
+                    is_semantically_correct = format_binary_output(output)
+
+            if code.strip() == "" or (critic and not is_semantically_correct):
                 return func(self, *args, **kwargs)
             else:
                 # TODO: sanitize given function using traditional methods and LLM
