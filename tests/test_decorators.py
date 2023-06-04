@@ -155,10 +155,10 @@ def test_class_stack_trace_decorator_with_gpt(model):
             time.sleep(retry_delay)
 
 
-@pytest.mark.parametrize("model", [claude, None])
-def test_is_generative(model):
+@pytest.mark.parametrize("model", [(claude, True), (None, False)])
+def test_is_generative(model, result):
     @adapt(model=model)
     def func():
         pass
 
-    assert func._is_generative
+    assert func._is_generative == result
