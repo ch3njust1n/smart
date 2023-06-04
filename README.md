@@ -4,6 +4,7 @@ Metaprogramming with safe code injection from [generative APIs](https://github.c
 # Setup instructions
 1. Create `.env` for your environment variables. See `.env.example`.
 2. Add your API key
+3. `pip install -e .`
 
 To run all unit tests. 
 
@@ -14,6 +15,11 @@ To run all unit tests.
 
 ```bash
 pytest -s -v --durations=0
+```
+
+To run all tests in a specific file:
+```bash
+pytest <file name>
 ```
 
 To run a specific unit test:
@@ -31,7 +37,7 @@ pytest -k <test name>
 
 `@adapt` decorator example using a large language model:
 ```python
-from meta import adapt
+from generative.decorator import adapt
 
 @adapt(model=llm)
 def func(a, b):
@@ -45,7 +51,7 @@ assert func(8) == 21
 
 `@catch` decorator example:
 ```python
-from meta import catch
+from generative.decorator import catch
 
 @catch(model=llm)
 def func(a, b):
@@ -54,7 +60,7 @@ def func(a, b):
 
 `@stack_trace` decorator example:
 ```python
-from meta import stack_trace
+from generative.decorator import stack_trace
 
 @stack_trace(model=llm)
 def funkodunko():
@@ -87,8 +93,8 @@ Suggestions for how to fix the error:
 
 Define your class:
 ```python
-from model import gpt
-from meta import GenerativeMetaClass
+from model import gpt3
+from generative.metaclasses import GenerativeMetaClass
 from prompt import format_generative_function
 
 class Doggo(metaclass=GenerativeMetaClass):
@@ -100,7 +106,7 @@ class Doggo(metaclass=GenerativeMetaClass):
 
 prompt = "Write a function with the header `def do_trick(self)` that returns a string '*sit*'"
 prompt = format_generative_function(prompt)
-new_trick = gpt(prompt)
+new_trick = gpt3(prompt)
 GenerativeMetaClass.generate(Doggo, new_trick)
 a_good_boy = Doggo('Chewy')
 a_good_boy.set_treat('roast beef')

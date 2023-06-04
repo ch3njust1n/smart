@@ -2,9 +2,10 @@ import sys
 import time
 from io import StringIO
 
-from metaclasses.demo import Car, Doggo, GenerativeMetaClass
-from model import gpt3, gpt4, claude
-from prompt import format_generative_function
+from generative.metaclasses import GenerativeMetaClass
+from .metaclasses.demo import Car, Doggo
+from model import gpt4
+from generative.prompt import format_generative_function
 
 
 def test_traditional_metaclass():

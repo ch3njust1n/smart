@@ -1,4 +1,4 @@
-from meta import GenerativeMetaClass
+from generative.metaclasses import GenerativeMetaClass
 
 
 class Car(metaclass=GenerativeMetaClass):

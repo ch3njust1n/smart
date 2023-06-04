@@ -6,13 +6,12 @@ from typing import Callable, Any, Optional, Type
 
 from RestrictedPython import compile_restricted
 
-from utils import remove_prepended, extract_func_name, to_func_name, is_incomplete_code
-from prompt import (
+from .utils import remove_prepended, extract_func_name, to_func_name, is_incomplete_code
+from .prompt import (
     format_generative_function,
     format_stack_trace,
     format_generative_function_from_input,
 )
-from pprint import pprint
 
 """
 A decorator that replaces the behavior of the decorated function with arbitrary code.
@@ -292,21 +291,3 @@ def generate_attribute(
         return Wrapper
 
     return decorator
-
-
-class GenerativeMetaClass(type):
-    def __init__(cls, name, bases, attrs):
-        super().__init__(name, bases, attrs)
-        cls.is_generative = False
-
-    @staticmethod
-    def generate(cls: Type["GenerativeMetaClass"], code: str):
-        cls.is_generative = True
-        local_vars = {}
-
-        code = remove_prepended(code)
-        code = textwrap.dedent(code)
-        func_name = extract_func_name(code)
-        byte_code = compile(code, filename=func_name, mode="exec")
-        exec(byte_code, {}, local_vars)
-        setattr(cls, func_name, local_vars[func_name])
