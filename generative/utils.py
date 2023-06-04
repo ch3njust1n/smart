@@ -1,7 +1,7 @@
 import re
 
 """
-This function takes a string that represents a function. 
+This function takes a string that represents a function.
 It parses the string to remove any text that occurs above the function header.
 
 Args:
@@ -26,7 +26,7 @@ def remove_prepended(func_string: str, end_marker="### END FUNCTION ###") -> str
 
 
 """
-This function takes a string that represents a function. 
+This function takes a string that represents a function.
 It parses the string and returns the function name else raises an error.
 
 Args:
@@ -95,8 +95,8 @@ def is_incomplete_code(input_string):
 
 
 """
-Extracts the word "true" or "false" from the input string, removes all spaces, newlines, tabs, and punctuation,
-and formats the extracted word to have the first letter capitalized.
+Extracts the word "true" or "false" from the input string, removes all spaces, newlines, tabs,
+and punctuation, and formats the extracted word to have the first letter capitalized.
 
 Args:
     input_str (str): The input string to extract the boolean value from.
