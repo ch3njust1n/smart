@@ -2,7 +2,10 @@
 
 name: Python application
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
