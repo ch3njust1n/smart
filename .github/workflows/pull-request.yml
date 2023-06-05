@@ -24,6 +24,14 @@ jobs:
         pip install pytest black flake8
         pip install -r requirements.txt
 
+    - name: Check code formatting with Black
+      run: |
+        black --check .
+
+    - name: Run flake8
+      run: |
+        flake8
+
     - name: Run pytest
       run: |
         pytest
@@ -35,11 +43,3 @@ jobs:
         ANTHROPIC_MODEL: claude-instant-v1
         TEMPERATURE: 0.7
         MAX_TOKENS: 3600
-
-    - name: Check code formatting with Black
-      run: |
-        black --check .
-
-    - name: Run flake8
-      run: |
-        flake8

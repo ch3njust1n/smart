@@ -140,7 +140,7 @@ def catch(model: Optional[Callable[[str], str]] = None) -> Callable:
             try:
                 # Execute the original function first
                 return func(*args, **kwargs)
-            except Exception as e:
+            except Exception:
                 # If there was an exception, and an LLM is provided, use it
                 if model and func_source:
                     prompt = format_generative_function(func_source)
