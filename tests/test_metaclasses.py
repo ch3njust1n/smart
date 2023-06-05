@@ -41,9 +41,7 @@ def mock_gpt4_metaclass():
 
 
 def test_generative_metaclass_with_gpt(mock_gpt4_metaclass):
-    with mock.patch(
-        "openai.ChatCompletion.create", return_value=mock_gpt4_metaclass
-    ):
+    with mock.patch("openai.ChatCompletion.create", return_value=mock_gpt4_metaclass):
         prompt = "Write a function with the header `def do_trick(self)` that returns a string '*sit*'"
         prompt = format_generative_function(prompt)
         new_trick = gpt4(prompt)
