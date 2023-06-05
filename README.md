@@ -6,7 +6,7 @@ Metaprogramming with safe code injection from [generative APIs](https://github.c
 # Setup instructions
 1. Create `.env` for your environment variables. See `.env.example`.
 2. Add your API key
-3. `pip install -e ".[dev]"`
+3. `python setup.py install`
 4. `pre-commit install`
 
 To run all unit tests.
