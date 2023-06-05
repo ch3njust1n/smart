@@ -1,5 +1,7 @@
 import sys
-import time
+import pytest
+import unittest.mock as mock
+from unittest.mock import Mock
 from io import StringIO
 
 from .metaclasses.demo import Car, Doggo
@@ -25,21 +27,28 @@ def honk(self, times=1):
     assert output == "0 - Beep beep!\n1 - Beep beep!\n2 - Beep beep!\n"
 
 
-def test_generative_metaclass_with_gpt():
-    retry_count = 3
-    retry_delay = 5
+@pytest.fixture
+def mock_gpt4_metaclass():
+    response = Mock()
+    response.choices = [Mock()]
+    response.choices[
+        0
+    ].message.content = """
+    def do_trick(self):
+        return "*sit*"
+    """
+    return response
 
-    for _ in range(retry_count):
-        try:
-            prompt = "Write a function with the header `def do_trick(self)` that returns a string '*sit*'"
-            prompt = format_generative_function(prompt)
-            new_trick = gpt4(prompt)
-            GenerativeMetaClass.generate(Doggo, new_trick)
-            a_good_boy = Doggo("Chewy")
-            assert a_good_boy.do_trick() == "*sit*"
-            a_good_boy.set_treat("roast beef")
-            assert a_good_boy.stomach == "roast beef"
-            break
-        except Exception as e:
-            print(f"Test error: {e}. Retrying after delay...")
-            time.sleep(retry_delay)
+
+def test_generative_metaclass_with_gpt(mock_gpt4_metaclass):
+    with mock.patch(
+        "openai.ChatCompletion.create", return_value=mock_gpt4_metaclass
+    ):
+        prompt = "Write a function with the header `def do_trick(self)` that returns a string '*sit*'"
+        prompt = format_generative_function(prompt)
+        new_trick = gpt4(prompt)
+        GenerativeMetaClass.generate(Doggo, new_trick)
+        a_good_boy = Doggo("Chewy")
+        assert a_good_boy.do_trick() == "*sit*"
+        a_good_boy.set_treat("roast beef")
+        assert a_good_boy.stomach == "roast beef"
