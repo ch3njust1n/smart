@@ -122,6 +122,7 @@ def mock_is_generative():
 @pytest.mark.parametrize("model,result", [(gpt4, True), (None, False)])
 def test_is_generative(model, result, mock_is_generative):
     with mock.patch("openai.ChatCompletion.create", return_value=mock_is_generative):
+
         @adapt(model=model)
         def func():
             pass
@@ -185,7 +186,9 @@ Suggestions for how to fix the error:
 
 @pytest.mark.parametrize("model", [gpt4])
 def test_func_stack_trace_with_gpt(model, mock_gpt4_stack_trace_function):
-    with mock.patch("openai.ChatCompletion.create", return_value=mock_gpt4_stack_trace_function):
+    with mock.patch(
+        "openai.ChatCompletion.create", return_value=mock_gpt4_stack_trace_function
+    ):
 
         @stack_trace(model=model)
         def funkodunko():
@@ -230,7 +233,10 @@ Suggestions for how to fix the error:
 
 @pytest.mark.parametrize("model", [gpt4])
 def test_class_stack_trace_decorator_with_gpt(model, mock_gpt4_stack_trace_class):
-    with mock.patch("openai.ChatCompletion.create", return_value=mock_gpt4_stack_trace_class):
+    with mock.patch(
+        "openai.ChatCompletion.create", return_value=mock_gpt4_stack_trace_class
+    ):
+
         @stack_trace(model=model)
         class DecoratedClass:
             def func(self):

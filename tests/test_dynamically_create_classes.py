@@ -61,7 +61,9 @@ def mock_gpt4_create_class():
 
 
 def test_generated_stringified_class_with_gpt(mock_gpt4_create_class):
-     with mock.patch("openai.ChatCompletion.create", return_value=mock_gpt4_create_class):
+    with mock.patch(
+        "openai.ChatCompletion.create", return_value=mock_gpt4_create_class
+    ):
         prompt = """
         You are a stochastic parrot that only repeats back JSON.
         Repeat the following JSON back to me:
@@ -80,7 +82,7 @@ def test_generated_stringified_class_with_gpt(mock_gpt4_create_class):
         Just repeat the JSON back to me exactly.
         """
         properties = textwrap.dedent(gpt4(prompt))
-        print(f'Generated properties: {properties}')
+        print(f"Generated properties: {properties}")
         properties = eval(properties)
         global_vars = {}
         func_source = properties["my_func"]
