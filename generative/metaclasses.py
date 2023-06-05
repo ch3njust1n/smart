@@ -1,18 +1,26 @@
 import textwrap
-from typing import Type
+from typing import Type, Dict, Tuple, Any
 
 from .utils import remove_prepended, extract_func_name
 
 
-class GenerativeMetaClass(type):
-    def __init__(cls, name, bases, attrs):
-        super().__init__(name, bases, attrs)
-        cls.is_generative = False
+class BaseMetaClass(type):
+    is_generative: bool = False
+
+
+class GenerativeMetaClass(BaseMetaClass):
+    def __init__(
+        cls: Type[Any],
+        name: str,
+        bases: Tuple[Type[Any], ...],
+        attrs: Dict[str, Any],
+    ) -> None:
+        cls.is_generative = False  # type: ignore
 
     @staticmethod
-    def generate(cls: Type["GenerativeMetaClass"], code: str):
-        cls.is_generative = True
-        local_vars = {}
+    def generate(cls: Type[Any], code: str) -> None:
+        cls.is_generative = True  # type: ignore
+        local_vars: Dict[str, Any] = {}
 
         code = remove_prepended(code)
         code = textwrap.dedent(code)

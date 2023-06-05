@@ -1,40 +1,35 @@
-# .github/workflows/dynamic.yml
+# .github/workflows/merge-main.yml
 
 name: Python application
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: [3.6, 3.7, 3.8, 3.9, 3.10, 3.11]
 
     steps:
     - name: Checkout source
       uses: actions/checkout@v2
-      
-    - name: Set up Python 3.9
+
+    - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: ${{ matrix.python-version }}
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pytest black flake8
+        pip install black tox tox-gh-actions
         pip install -r requirements.txt
-
-    - name: Run pytest
-      run: |
-        pytest
-      env:
-        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        OPENAI_MODEL: text-davinci-003
-        OPENAI_MODEL_GPT4: gpt-4
-        ANTHROPIC_MODEL: claude-instant-v1
-        TEMPERATURE: 0.7
-        MAX_TOKENS: 3600
 
     - name: Check code formatting with Black
       run: |
@@ -43,3 +38,15 @@ jobs:
     - name: Run flake8
       run: |
         flake8
+
+    - name: Run Tox
+      run: |
+        tox
+      env:
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        OPENAI_MODEL: text-davinci-003
+        OPENAI_MODEL_GPT4: gpt-4
+        ANTHROPIC_MODEL: claude-instant-v1
+        TEMPERATURE: 0.7
+        MAX_TOKENS: 3600

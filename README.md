@@ -1,10 +1,12 @@
 # Dynamic Metaprogramming with Large Language Models
 Metaprogramming with safe code injection from [generative APIs](https://github.com/ch3njust1n/generative-api) for adaptable software
+![Tests](https://github.com/ch3njust1n/generative/actions/workflows/merged-main.yml/badge.svg)
 
 # Setup instructions
 1. Create `.env` for your environment variables. See `.env.example`.
 2. Add your API key
 3. `pip install -e ".[dev]"`
+4. `pre-commit install`
 
 To run all unit tests.
 

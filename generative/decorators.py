@@ -2,7 +2,7 @@ import re
 import inspect
 import textwrap
 import traceback
-from typing import Callable, Any, Optional, Type
+from typing import Callable, Any, Optional, Type, Dict
 
 from RestrictedPython import compile_restricted
 
@@ -41,7 +41,7 @@ def adapt(
 ) -> Callable:
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         nonlocal code
-        func_source: Optional[str] = None
+        func_source: str = ""
         try:
             # Get the source code of the function
             func_source = inspect.getsource(func)
@@ -58,7 +58,7 @@ def adapt(
 
             is_semantically_correct = False
 
-            if model:
+            if model and func_source:
                 # Format the generative function here, inside the wrapper,
                 # where you have access to `self`
                 prompt = format_generative_function(func_source, class_functions)
@@ -78,7 +78,7 @@ def adapt(
                 # global_vars = {} allows all global variables to be accessed.
                 # However, using RestrictedPython.safe_globals prevents many common functions
                 # from being implemented by the LLM.
-                global_vars = {}
+                global_vars: Dict[str, Any] = {}
                 code = remove_prepended(code)
                 code = textwrap.dedent(code)
                 byte_code = compile_restricted(code, mode="exec")
@@ -94,7 +94,7 @@ def adapt(
                 return result
 
         # Add a special attribute to the wrapper to indicate it has access to a generative model
-        wrapper._is_generative = model is not None
+        wrapper._is_generative = model is not None  # type: ignore[attr-defined]
 
         return wrapper
 
@@ -140,15 +140,14 @@ def catch(model: Optional[Callable[[str], str]] = None) -> Callable:
             try:
                 # Execute the original function first
                 return func(*args, **kwargs)
-            except Exception as e:
-                print(f"An exception occurred in the original function: {e}")
+            except Exception:
                 # If there was an exception, and an LLM is provided, use it
                 if model and func_source:
                     prompt = format_generative_function(func_source)
                     code = model(prompt)
 
                     if code.strip() != "":
-                        global_vars = {
+                        global_vars: Dict[str, Any] = {
                             "func_source": func_source,
                         }
 
@@ -160,7 +159,7 @@ def catch(model: Optional[Callable[[str], str]] = None) -> Callable:
 
                         # TODO: sanitize generated code i.e. generative_func
                         func_name = extract_func_name(code)
-                        generative_func = global_vars[func_name]
+                        generative_func: Callable = global_vars[func_name]
 
                         # TODO: sanitize result
                         result = generative_func(*args, **kwargs)
@@ -172,7 +171,7 @@ def catch(model: Optional[Callable[[str], str]] = None) -> Callable:
             raise
 
         # Add a special attribute to the wrapper to indicate it has access to a generative model
-        wrapper._is_generative = model is not None
+        wrapper._is_generative = model is not None  # type: ignore[attr-defined]
 
         return wrapper
 
@@ -197,7 +196,7 @@ Returns:
 
 def stack_trace(model: Optional[Callable[[str], str]] = None) -> Callable:
     def decorator(obj: Any) -> Any:
-        if isinstance(obj, Type):
+        if inspect.isclass(obj):
 
             class Wrapper(obj):
                 pass
@@ -208,7 +207,7 @@ def stack_trace(model: Optional[Callable[[str], str]] = None) -> Callable:
 
             return Wrapper
 
-        elif callable(obj):
+        elif inspect.isfunction(obj):
 
             def wrapper(*args: Any, **kwargs: Any) -> Any:
                 try:
@@ -222,7 +221,6 @@ def stack_trace(model: Optional[Callable[[str], str]] = None) -> Callable:
                         prompt = format_stack_trace(stack_trace)
                         summary = textwrap.dedent(model(prompt))
                         new_exception_message = f"{stack_trace}\n{summary}"
-                        print(new_exception_message)
 
                         # Raise a new exception with the modified message
                         raise Exception(new_exception_message) from None
@@ -231,7 +229,7 @@ def stack_trace(model: Optional[Callable[[str], str]] = None) -> Callable:
                         raise e from None
 
             # Add a special attribute to the wrapper to indicate it has access to a generative model
-            wrapper._is_generative = model is not None
+            wrapper._is_generative = model is not None  # type: ignore[attr-defined]
 
             return wrapper
         else:
@@ -304,7 +302,6 @@ def generate_attribute(
                                 func_name, kwargs, context=available_funcs
                             )
                             func_source = model(prompt)
-                            print(f"Model function generated:\n{func_source}")
 
                             if is_incomplete_code(func_source):
                                 raise exception
