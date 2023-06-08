@@ -46,7 +46,13 @@ class AbstractDatabase(ABC):
         """
         Inserts data into the database.
 
-        :param data: Data to be inserted.
+        :param data: Data to be inserted, which will always take the form of a dictionary:
+        data = {
+            "function_name": func_name,
+            "generated_code": code,
+            "args": {...},
+            "kwargs": {...},
+        }
         """
         pass
 
