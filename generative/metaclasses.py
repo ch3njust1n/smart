@@ -51,6 +51,12 @@ class AbstractDatabase(ABC):
         pass
 
 
+class DatabaseException(Exception):
+    """Exception raised for database-related errors."""
+
+    pass
+
+
 class BaseMetaClass(type):
     is_generative: bool = False
 
@@ -115,13 +121,18 @@ class GenerativeMetaClass(BaseMetaClass):
         func_name = extract_func_name(code)
 
         if database:
-            capability = {
-                "function_name": func_name,
-                "generated_code": code,
-                "args": {},
-                "kwargs": {},
-            }
-            database.add(capability)
+            try:
+                capability = {
+                    "function_name": func_name,
+                    "generated_code": code,
+                    "args": {},
+                    "kwargs": {},
+                }
+                database.add(capability)
+            except Exception as e:
+                raise DatabaseException(
+                    "An error occurred while adding to the database"
+                ) from e
 
         byte_code = compile(code, filename=func_name, mode="exec")
         exec(byte_code, {}, local_vars)

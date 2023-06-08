@@ -6,7 +6,7 @@ from typing import Callable, Any, Optional, Dict
 
 from RestrictedPython import compile_restricted
 
-from .metaclasses import AbstractDatabase
+from .metaclasses import AbstractDatabase, DatabaseException
 
 from .utils import (
     remove_prepended,
@@ -94,13 +94,18 @@ def adapt(
                 generative_func = global_vars[func_name]
 
                 if database:
-                    capability = {
-                        "function_name": func_name,
-                        "generated_code": code,
-                        "args": args,
-                        "kwargs": kwargs,
-                    }
-                    database.add(capability)
+                    try:
+                        capability = {
+                            "function_name": func_name,
+                            "generated_code": code,
+                            "args": args,
+                            "kwargs": kwargs,
+                        }
+                        database.add(capability)
+                    except Exception as e:
+                        raise DatabaseException(
+                            "An error occurred while adding to the database"
+                        ) from e
 
                 # TODO: sanitize result
                 result = generative_func(self, *args, **kwargs)
