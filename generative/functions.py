@@ -93,6 +93,15 @@ def adapt(
                 func_name = extract_func_name(code)
                 generative_func = global_vars[func_name]
 
+                if database:
+                    capability = {
+                        "function_name": func_name,
+                        "generated_code": code,
+                        "args": args,
+                        "kwargs": kwargs,
+                    }
+                    database.add(capability)
+
                 # TODO: sanitize result
                 result = generative_func(self, *args, **kwargs)
 

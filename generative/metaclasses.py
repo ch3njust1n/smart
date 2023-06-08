@@ -22,17 +22,17 @@ that can be used anywhere an object of type `AbstractDatabase` is expected.
 
 Subclasses must implement the following methods:
 
-query(self, query: str) -> Any:
+find(self, query: str) -> Any:
     Executes a given query against the database.
 
-insert(self, data: Any) -> None:
-    Inserts data into the database.
+add(self, data: Any) -> None:
+    Adds data into the database.
 """
 
 
 class AbstractDatabase(ABC):
     @abstractmethod
-    def query(self, query: str) -> Any:
+    def find(self, query: str) -> Any:
         """
         Executes a given query against the database.
 
@@ -42,7 +42,7 @@ class AbstractDatabase(ABC):
         pass
 
     @abstractmethod
-    def insert(self, data: Any) -> None:
+    def add(self, data: Any) -> None:
         """
         Inserts data into the database.
 
@@ -113,6 +113,16 @@ class GenerativeMetaClass(BaseMetaClass):
             raise SyntaxError("Invalid syntax")
 
         func_name = extract_func_name(code)
+
+        if database:
+            capability = {
+                "function_name": func_name,
+                "generated_code": code,
+                "args": {},
+                "kwargs": {},
+            }
+            database.add(capability)
+
         byte_code = compile(code, filename=func_name, mode="exec")
         exec(byte_code, {}, local_vars)
         setattr(cls, func_name, local_vars[func_name])
