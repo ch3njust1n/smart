@@ -5,6 +5,7 @@ from unittest.mock import Mock
 from generative.functions import stack_trace
 from .model import gpt4
 
+
 @pytest.fixture
 def mock_gpt4_stack_trace_function():
     response = Mock()
