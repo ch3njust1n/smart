@@ -6,6 +6,8 @@ from typing import Callable, Any, Optional, Dict
 
 from RestrictedPython import compile_restricted
 
+from .metaclasses import AbstractDatabase
+
 from .utils import (
     remove_prepended,
     extract_func_name,
@@ -36,6 +38,7 @@ def adapt(
     code: str = "",
     model: Optional[Callable[[str], str]] = None,
     critic: Optional[Callable[[str], str]] = None,
+    database: Optional[AbstractDatabase] = None,
 ) -> Callable:
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         nonlocal code

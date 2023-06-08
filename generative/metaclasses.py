@@ -1,11 +1,54 @@
 import textwrap
-from typing import Type, Dict, Tuple, Any
+from abc import ABC, abstractmethod
+from typing import (
+    Any,
+    Dict,
+    Optional,
+    Tuple,
+    Type,
+)
 
 from .utils import (
     extract_func_name,
     is_valid_syntax,
     remove_prepended,
 )
+
+"""
+This is an abstract base class that represents a database API.
+
+Developers can extend this class to implement their own database classes
+that can be used anywhere an object of type `AbstractDatabase` is expected.
+
+Subclasses must implement the following methods:
+
+query(self, query: str) -> Any:
+    Executes a given query against the database.
+
+insert(self, data: Any) -> None:
+    Inserts data into the database.
+"""
+
+
+class AbstractDatabase(ABC):
+    @abstractmethod
+    def query(self, query: str) -> Any:
+        """
+        Executes a given query against the database.
+
+        :param query: query to be executed.
+        :return: Query results.
+        """
+        pass
+
+    @abstractmethod
+    def insert(self, data: Any) -> None:
+        """
+        Inserts data into the database.
+
+        :param data: Data to be inserted.
+        """
+        pass
 
 
 class BaseMetaClass(type):
@@ -57,7 +100,9 @@ class GenerativeMetaClass(BaseMetaClass):
     """
 
     @staticmethod
-    def generate(cls: Type[Any], code: str) -> None:
+    def generate(
+        cls: Type[Any], code: str, database: Optional[AbstractDatabase] = None
+    ) -> None:
         cls.is_generative = True  # type: ignore
         local_vars: Dict[str, Any] = {}
 
