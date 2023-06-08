@@ -22,6 +22,9 @@ that can be used anywhere an object of type `AbstractDatabase` is expected.
 
 Subclasses must implement the following methods:
 
+contains(self, query: str) -> bool:
+    Checks if the database contains a given query.
+
 find(self, query: str) -> Any:
     Executes a given query against the database.
 
@@ -31,6 +34,16 @@ add(self, data: Any) -> None:
 
 
 class AbstractDatabase(ABC):
+    @abstractmethod
+    def contains(self, query: str) -> bool:
+        """
+        Checks if the database contains a given query.
+
+        :param query: query to be checked.
+        :return: True if the query is in the database, False otherwise.
+        """
+        pass
+
     @abstractmethod
     def find(self, query: str) -> Any:
         """
@@ -139,13 +152,15 @@ class GenerativeMetaClass(BaseMetaClass):
 
         if database:
             try:
-                capability = {
-                    "function_name": func_name,
-                    "generated_code": code,
-                    "args": {},
-                    "kwargs": {},
-                }
-                database.add(capability)
+                capability = str(
+                    {
+                        "function_name": func_name,
+                        "args": {},
+                        "kwargs": {},
+                    }
+                )
+                if not database.contains(capability):
+                    database.add(capability)
             except Exception as e:
                 raise DatabaseException(
                     "An error occurred while adding to the database"
