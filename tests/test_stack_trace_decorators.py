@@ -2,7 +2,7 @@
 import pytest
 import unittest.mock as mock
 from unittest.mock import Mock
-from generative.decorators import stack_trace
+from generative.functions import stack_trace
 from .model import gpt4
 
 @pytest.fixture

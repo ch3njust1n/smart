@@ -2,7 +2,7 @@ import pytest
 import unittest.mock as mock
 from unittest.mock import Mock
 from .model import gpt4
-from generative.decorators import generate_attribute
+from generative.classes import generate_attribute
 
 
 @pytest.fixture

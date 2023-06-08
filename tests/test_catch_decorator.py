@@ -2,7 +2,7 @@
 import pytest
 import unittest.mock as mock
 from unittest.mock import Mock
-from generative.decorators import catch
+from generative.functions import catch
 from .model import gpt4
 
 

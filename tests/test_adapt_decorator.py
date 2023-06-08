@@ -2,7 +2,7 @@
 import pytest
 import unittest.mock as mock
 from unittest.mock import Mock, MagicMock
-from generative.decorators import adapt
+from generative.functions import adapt
 from .model import gpt4, claude
 
 
