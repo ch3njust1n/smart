@@ -10,6 +10,7 @@ from .utils import (
     remove_prepended,
     extract_func_name,
     format_binary_output,
+    is_valid_syntax,
 )
 
 from .prompt import (
@@ -78,6 +79,10 @@ def adapt(
                 global_vars: Dict[str, Any] = {}
                 code = remove_prepended(code)
                 code = textwrap.dedent(code)
+                
+                if not is_valid_syntax(code):
+                    raise SyntaxError('Invalid syntax')
+                
                 byte_code = compile_restricted(code, mode="exec")
                 exec(byte_code, global_vars)
 
@@ -151,6 +156,10 @@ def catch(model: Optional[Callable[[str], str]] = None) -> Callable:
                         # TODO: sanitize given function using traditional methods and LLM
                         code = remove_prepended(code)
                         code = textwrap.dedent(code)
+
+                        if not is_valid_syntax(code):
+                            raise SyntaxError('Invalid syntax')
+
                         byte_code = compile_restricted(code, mode="exec")
                         exec(byte_code, global_vars)
 
