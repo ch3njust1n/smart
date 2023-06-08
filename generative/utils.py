@@ -1,4 +1,5 @@
 import re
+import ast
 
 """
 This function takes a string that represents a function.
@@ -120,3 +121,22 @@ def format_binary_output(input_str: str) -> bool:
         return match.group(1).capitalize() == "True"
     else:
         raise ValueError("No boolean value found in input string")
+
+
+"""
+Determine if the given stringified code is valid Python syntax.
+
+Args:
+    code (str): Source code
+
+Returns:
+    bool: True if the code is valid Python syntax, False otherwise.
+"""
+
+
+def is_valid_syntax(code: str) -> bool:
+    try:
+        ast.parse(code)
+        return True
+    except SyntaxError:
+        return False

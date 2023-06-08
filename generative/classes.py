@@ -5,6 +5,7 @@ from typing import Callable, Any, Optional, Type
 from .utils import (
     to_func_name,
     is_incomplete_code,
+    is_valid_syntax,
 )
 
 from .prompt import format_generative_function_from_input
@@ -31,6 +32,9 @@ Args:
 Returns:
     A class decorator that can be used to decorate a class, with the added capability of dynamically
     generating and executing new attributes.
+
+Raises:
+    SyntaxError: If the generated code is not valid Python code.
 """
 
 
@@ -72,7 +76,10 @@ def generate_attribute(
                             prompt = format_generative_function_from_input(
                                 func_name, kwargs, context=available_funcs
                             )
-                            func_source = model(prompt)
+                            func_source = textwrap.dedent(model(prompt))
+
+                            if not is_valid_syntax(func_source):
+                                raise SyntaxError("Invalid syntax")
 
                             if is_incomplete_code(func_source):
                                 raise exception
