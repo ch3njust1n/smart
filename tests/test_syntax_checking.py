@@ -1,5 +1,6 @@
 from generative.utils import is_valid_syntax
 
+
 def test_is_code_statement():
     assert is_valid_syntax('print("Hello, world!")')
 

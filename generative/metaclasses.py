@@ -1,7 +1,11 @@
 import textwrap
 from typing import Type, Dict, Tuple, Any
 
-from .utils import remove_prepended, extract_func_name
+from .utils import (
+    extract_func_name,
+    is_valid_syntax,
+    remove_prepended,
+)
 
 
 class BaseMetaClass(type):
@@ -24,6 +28,10 @@ class GenerativeMetaClass(BaseMetaClass):
 
         code = remove_prepended(code)
         code = textwrap.dedent(code)
+
+        if not is_valid_syntax(code):
+            raise SyntaxError("Invalid syntax")
+
         func_name = extract_func_name(code)
         byte_code = compile(code, filename=func_name, mode="exec")
         exec(byte_code, {}, local_vars)

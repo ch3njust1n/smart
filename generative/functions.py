@@ -79,10 +79,10 @@ def adapt(
                 global_vars: Dict[str, Any] = {}
                 code = remove_prepended(code)
                 code = textwrap.dedent(code)
-                
+
                 if not is_valid_syntax(code):
-                    raise SyntaxError('Invalid syntax')
-                
+                    raise SyntaxError("Invalid syntax")
+
                 byte_code = compile_restricted(code, mode="exec")
                 exec(byte_code, global_vars)
 
@@ -158,7 +158,7 @@ def catch(model: Optional[Callable[[str], str]] = None) -> Callable:
                         code = textwrap.dedent(code)
 
                         if not is_valid_syntax(code):
-                            raise SyntaxError('Invalid syntax')
+                            raise SyntaxError("Invalid syntax")
 
                         byte_code = compile_restricted(code, mode="exec")
                         exec(byte_code, global_vars)

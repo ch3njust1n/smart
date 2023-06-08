@@ -79,7 +79,7 @@ def generate_attribute(
                             func_source = textwrap.dedent(model(prompt))
 
                             if not is_valid_syntax(func_source):
-                                raise SyntaxError('Invalid syntax')
+                                raise SyntaxError("Invalid syntax")
 
                             if is_incomplete_code(func_source):
                                 raise exception
