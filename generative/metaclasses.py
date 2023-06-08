@@ -51,10 +51,21 @@ class AbstractDatabase(ABC):
         pass
 
 
-class DatabaseException(Exception):
-    """Exception raised for database-related errors."""
+"""Exception raised for database-related errors."""
 
+
+class DatabaseException(Exception):
     pass
+
+
+"""
+BaseMetaClass is a metaclass that defines a single attribute: is_generative.
+
+This attribute is intended to be used in subclasses to indicate whether a class is generative.
+
+Attributes:
+    is_generative (bool): A boolean indicating whether a class is generative. Defaults to False.
+"""
 
 
 class BaseMetaClass(type):
