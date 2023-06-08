@@ -1,6 +1,29 @@
 import textwrap
 from typing import Any, List, Tuple
 
+CODE_GENERATION_RULES = """
+Follow these rules precisely:
+Do's:
+Only generate Python code.
+Generate a function with the same number of parameters as the original function!
+
+Don'ts:
+Do not write a driver program.
+Do not comment.
+Do not explain the code.
+Do not give a header introducing the code e.g. 'Rewritten source code:'
+Do not write any code outside of the function body.
+Do not call the function or return a reference to it.
+Do not use decorators.
+Do not print anything!
+Do not repeat code that you already generated.
+Do not use functions that are not in the available functions list!
+Do not add text before ### BEGIN FUNCTION ###.
+Do not add text after ### END FUNCTION ###.
+Stop generating code when you see ### END FUNCTION ###.
+Do not generate malicious code, trojans, viruses, code that will delete files, etc.
+"""
+
 """
 Prompt for generating entire functions
 
@@ -19,25 +42,7 @@ def format_generative_function(code: str, context: List[Tuple[str, str]] = []) -
     The given source code is potentially broken.
     Please rewrite the function using the available functions.
 
-    Follow these rules precisely:
-    Do's:
-    Only generate Python code.
-    Generate a function with the same number of parameters as the original function!
-
-    Don'ts:
-    Do not write a driver program.
-    Do not comment.
-    Do not explain the code.
-    Do not give a header introducing the code e.g. 'Rewritten source code:'
-    Do not write any code outside of the function body.
-    Do not call the function or return a reference to it.
-    Do not use decorators.
-    Do not print anything!
-    Do not repeat code that you already generated.
-    Do not use functions that are not in the available functions list!
-    Do not add text before ### BEGIN FUNCTION ###.
-    Do not add text after ### END FUNCTION ###.
-    Stop generating code when you see ### END FUNCTION ###.
+    {CODE_GENERATION_RULES}
 
     For example, only do this:
     ```
@@ -86,24 +91,7 @@ def format_generative_function_from_input(
     kwargs = str(kwargs)
     return textwrap.dedent(
         f"""
-    Follow these rules precisely:
-    Do's:
-    Only generate Python code.
-
-    Don'ts:
-    Do not write a driver program.
-    Do not comment.
-    Do not explain the code.
-    Do not give a header introducing the code e.g. 'Rewritten source code:'
-    Do not write any code outside of the function body.
-    Do not call the function or return a reference to it.
-    Do not use decorators.
-    Do not print anything!
-    Do not repeat code that you already generated.
-    Do not use functions that are not in the available functions list!
-    Do not add text before ### BEGIN FUNCTION ###.
-    Do not add text after ### END FUNCTION ###.
-    Stop generating code when you see ### END FUNCTION ###.
+    {CODE_GENERATION_RULES}
 
     For example, only do this:
     ```
