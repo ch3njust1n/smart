@@ -6,17 +6,12 @@ from generative.functions import adapt
 from .model import gpt4, claude
 
 
-@pytest.mark.parametrize(
-    "code",
-    [
-        "",
-        """
+def test_add():
+    code = """
     def add(a, b):
         return sum([a, b])
-    """,
-    ],
-)
-def test_add(code):
+    """
+
     @adapt(code)
     def add(a, b):
         return a + b

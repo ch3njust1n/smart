@@ -13,6 +13,7 @@ from .utils import (
     extract_func_name,
     format_binary_output,
     is_valid_syntax,
+    to_func_name,
 )
 
 from .prompt import (
@@ -28,6 +29,8 @@ Args:
     code  (string, optional): A string of Python code that returns a result.
     model (Callable, optional): LLM to generate code.
     critic (Callable, optional): LLM to review generated code from `model`.
+    database (AbstractDatabase, optional): An instance of a class that implements the
+                                           AbstractDatabase interface.
 
 Returns:
     A function that wraps the original function, replacing its behavior with the provided code.
@@ -51,6 +54,21 @@ def adapt(
 
         def wrapper(self, *args: Any, **kwargs: Any) -> Any:
             nonlocal code
+            cached_code = ""
+            func_name = to_func_name(func_source)
+
+            if database:
+                query = str(
+                    {
+                        "function_name": func_name,
+                        "args": args,
+                        "kwargs": kwargs,
+                    }
+                )
+                cached_code = database.contains(query)
+
+                if cached_code:
+                    return cached_code
 
             # Here, we can access `self` and get all functions of its class
             class_functions = inspect.getmembers(
@@ -97,9 +115,9 @@ def adapt(
                     try:
                         capability = {
                             "function_name": func_name,
-                            "generated_code": code,
                             "args": args,
                             "kwargs": kwargs,
+                            "generated_code": code,
                         }
                         database.add(capability)
                     except Exception as e:

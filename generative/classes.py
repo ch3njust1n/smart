@@ -8,6 +8,7 @@ from .utils import (
     is_valid_syntax,
 )
 
+from .metaclasses import AbstractDatabase, DatabaseException
 from .prompt import format_generative_function_from_input
 
 """
@@ -28,6 +29,7 @@ defined.
 
 Args:
     model: A function that takes a string prompt and returns a string of Python code.
+    database: An instance of a class that implements the AbstractDatabase interface.
 
 Returns:
     A class decorator that can be used to decorate a class, with the added capability of dynamically
@@ -39,7 +41,8 @@ Raises:
 
 
 def generate_attribute(
-    model: Optional[Callable[[str], str]]
+    model: Optional[Callable[[str], str]],
+    database: Optional[AbstractDatabase] = None,
 ) -> Callable[[Type[Any]], Type[Any]]:
     def decorator(cls: Type[Any]) -> Type[Any]:
         class Wrapper(cls):
@@ -56,8 +59,24 @@ def generate_attribute(
                     exception = e
 
                     def method_not_found(*args, **kwargs):
+                        func_name = to_func_name(name)
+                        cached_code = ""
+
+                        if database:
+                            query = str(
+                                {
+                                    "function_name": func_name,
+                                    "args": args,
+                                    "kwargs": kwargs,
+                                }
+                            )
+                            cached_code = database.contains(query)
+
+                            if cached_code:
+                                return cached_code
+
                         # If model is specified and callable, use it to generate the output string
-                        if model is not None:
+                        if not cached_code and model is not None:
                             # This will return a list of tuples where the first item is the name of
                             # the method and the second item is the method itself. If you only want
                             # the names, you can do:
@@ -72,7 +91,6 @@ def generate_attribute(
                                 for method in all_methods
                             ]
 
-                            func_name = to_func_name(name)
                             prompt = format_generative_function_from_input(
                                 func_name, kwargs, context=available_funcs
                             )
@@ -83,6 +101,20 @@ def generate_attribute(
 
                             if is_incomplete_code(func_source):
                                 raise exception
+
+                            if database:
+                                try:
+                                    capability = {
+                                        "function_name": func_name,
+                                        "args": args,
+                                        "kwargs": kwargs,
+                                        "generated_code": func_source,
+                                    }
+                                    database.add(capability)
+                                except Exception as e:
+                                    raise DatabaseException(
+                                        "An error occurred while adding to the database"
+                                    ) from e
 
                             return func_source
                         else:
