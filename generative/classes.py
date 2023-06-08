@@ -1,6 +1,6 @@
 import inspect
 import textwrap
-from typing import Callable, Any, Optional, Type, Dict
+from typing import Callable, Any, Optional, Type
 
 from .utils import (
     to_func_name,
