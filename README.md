@@ -153,4 +153,45 @@ all_funcs = inspect.getmembers(
 [f for f in all_funcs if f._is_generative]
 ```
 
+### Integrate database
+
+Clients can integrate custom database solutions to save the generated code, function name, and, if available, arguments and keyword arguments. This could be useful in large pipelines for embedding generated code. That could later be retreived given a similar input so that the model does not need to be run again.
+
+```python
+import redis
+
+from generative.functions import adapt
+from generative.classes import AbstractDatabase
+from models import claude
+
+class VectorDB(AbstractDatabase):
+    def __init__(self):
+        self.db = redis.Redis(host='localhost', port=6379, db=0)
+    
+    def find(self, query: str) -> List[Dict] :
+        self.db.get(query)
+
+    """
+    data will always take this form:
+
+    data = {
+        "function_name": func_name,
+        "generated_code": code,
+        "args": {...},
+        "kwargs": {...},
+    }
+    """
+    def add(self, data: str) -> None:
+        key: str = data.function_name
+        self.db.set(key, data)
+
+class Demo():
+    def __init__(self):
+        self.db = VectorDB()
+
+    @adapt(model=claude, critic=claude)
+    def func():
+        pass # some functionality to self-heal or adapt
+```
+
 ### Code Injection

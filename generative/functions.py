@@ -6,6 +6,8 @@ from typing import Callable, Any, Optional, Dict
 
 from RestrictedPython import compile_restricted
 
+from .metaclasses import AbstractDatabase, DatabaseException
+
 from .utils import (
     remove_prepended,
     extract_func_name,
@@ -36,6 +38,7 @@ def adapt(
     code: str = "",
     model: Optional[Callable[[str], str]] = None,
     critic: Optional[Callable[[str], str]] = None,
+    database: Optional[AbstractDatabase] = None,
 ) -> Callable:
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         nonlocal code
@@ -89,6 +92,20 @@ def adapt(
                 # TODO: sanitize generated code i.e. generative_func
                 func_name = extract_func_name(code)
                 generative_func = global_vars[func_name]
+
+                if database:
+                    try:
+                        capability = {
+                            "function_name": func_name,
+                            "generated_code": code,
+                            "args": args,
+                            "kwargs": kwargs,
+                        }
+                        database.add(capability)
+                    except Exception as e:
+                        raise DatabaseException(
+                            "An error occurred while adding to the database"
+                        ) from e
 
                 # TODO: sanitize result
                 result = generative_func(self, *args, **kwargs)

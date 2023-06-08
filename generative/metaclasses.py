@@ -1,11 +1,77 @@
 import textwrap
-from typing import Type, Dict, Tuple, Any
+from abc import ABC, abstractmethod
+from typing import (
+    Any,
+    Dict,
+    Optional,
+    Tuple,
+    Type,
+)
 
 from .utils import (
     extract_func_name,
     is_valid_syntax,
     remove_prepended,
 )
+
+"""
+This is an abstract base class that represents a database API.
+
+Developers can extend this class to implement their own database classes
+that can be used anywhere an object of type `AbstractDatabase` is expected.
+
+Subclasses must implement the following methods:
+
+find(self, query: str) -> Any:
+    Executes a given query against the database.
+
+add(self, data: Any) -> None:
+    Adds data into the database.
+"""
+
+
+class AbstractDatabase(ABC):
+    @abstractmethod
+    def find(self, query: str) -> Any:
+        """
+        Executes a given query against the database.
+
+        :param query: query to be executed.
+        :return: Query results.
+        """
+        pass
+
+    @abstractmethod
+    def add(self, data: Any) -> None:
+        """
+        Inserts data into the database.
+
+        :param data: Data to be inserted, which will always take the form of a dictionary:
+        data = {
+            "function_name": func_name,
+            "generated_code": code,
+            "args": {...},
+            "kwargs": {...},
+        }
+        """
+        pass
+
+
+"""Exception raised for database-related errors."""
+
+
+class DatabaseException(Exception):
+    pass
+
+
+"""
+BaseMetaClass is a metaclass that defines a single attribute: is_generative.
+
+This attribute is intended to be used in subclasses to indicate whether a class is generative.
+
+Attributes:
+    is_generative (bool): A boolean indicating whether a class is generative. Defaults to False.
+"""
 
 
 class BaseMetaClass(type):
@@ -57,7 +123,9 @@ class GenerativeMetaClass(BaseMetaClass):
     """
 
     @staticmethod
-    def generate(cls: Type[Any], code: str) -> None:
+    def generate(
+        cls: Type[Any], code: str, database: Optional[AbstractDatabase] = None
+    ) -> None:
         cls.is_generative = True  # type: ignore
         local_vars: Dict[str, Any] = {}
 
@@ -68,6 +136,21 @@ class GenerativeMetaClass(BaseMetaClass):
             raise SyntaxError("Invalid syntax")
 
         func_name = extract_func_name(code)
+
+        if database:
+            try:
+                capability = {
+                    "function_name": func_name,
+                    "generated_code": code,
+                    "args": {},
+                    "kwargs": {},
+                }
+                database.add(capability)
+            except Exception as e:
+                raise DatabaseException(
+                    "An error occurred while adding to the database"
+                ) from e
+
         byte_code = compile(code, filename=func_name, mode="exec")
         exec(byte_code, {}, local_vars)
         setattr(cls, func_name, local_vars[func_name])
