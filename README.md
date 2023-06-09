@@ -59,19 +59,38 @@ To setup linting with `flake8` and auto formatting with `black`:
 }
 ```
 
-### Decorator usage
+---
+
+## Using the generative package
+
+### **Setup**
 
 1. `OPENAI_API_KEY` must be set in `.env` or in your terminal `OPENAI_API_KEY=your-api-key-here`
 2. Define your custome LLM solution. Then import the decorators and your llm function and pass it to the decorator.
 3. Use as follows:
 
-### Function decorators
 
-`@adapt` decorator example using a large language model:
+### **Bring your own model**
+
+Create a custom model class with a `generate()` function that takes a prompt and returns a string.
+
+All functionality in the `generative` package expects a model that inherits from the abstract class `AbstractGenerativeModel`.
+
+```python
+from generative.metaclasses import AbstractGenerativeModel
+
+class LLM(AbstractGenerativeModel):
+    def generate(self, prompt: str) -> str:
+        # Must implement generate()
+```
+
+### **Function decorators**
+
+`@adapt` decorator enables your model to control the behavior of the decorated function at ***run-time***. The model could check for semantic errors and change based on input.
 ```python
 from generative.decorator import adapt
 
-@adapt(model=llm)
+@adapt(model=LLM)
 def func(a, b):
    prompt = """
    Write a complete python 3 function, including the header and
@@ -81,26 +100,26 @@ def func(a, b):
 assert func(8) == 21
 ```
 
-`@catch` decorator example:
+`@catch` decorator enables your model to control the behavior of the decorated function at ***run-time*** only when an exception is thrown.
 ```python
 from generative.decorator import catch
 
-@catch(model=llm)
+@catch(model=LLM)
 def func(a, b):
       raise Exception("Original function exception")
 ```
 
-`@stack_trace` decorator example:
+`@stack_trace` decorator augments stack traces with human-readable summaries and steps to debug or fix the issue.
 ```python
 from generative.decorator import stack_trace
 
-@stack_trace(model=llm)
+@stack_trace(model=LLM)
 def funkodunko():
       items = [1, 2, 3]
       return items[5]
 ```
 
-Produces a human-readable summary of the stack trace:
+Example output:
 ```bash
 tests/test_adapt_decorator.py Traceback (most recent call last):
   File "/Users/justin/Documents/dev/personal/ml/dynamic-mp-llm/meta.py", line 167, in wrapper
@@ -121,11 +140,11 @@ Suggestions for how to fix the error:
 3. If the list is empty, consider initializing the list with data.
 ```
 
-### Metaclasses
+### **GenerativeMetaClass**
 
-Define your class:
+`GenerativeMetaClass` is enables its metaclassed classes to apply generated functions at ***run-time***.
 ```python
-from model import gpt3
+from model import GPT3
 from generative.metaclasses import GenerativeMetaClass
 from prompt import format_generative_function
 
@@ -137,8 +156,7 @@ class Doggo(metaclass=GenerativeMetaClass):
         self.stomach = treat
 
 prompt = "Write a function with the header `def do_trick(self)` that returns a string '*sit*'"
-prompt = format_generative_function(prompt)
-new_trick = gpt3(prompt)
+new_trick = GPT3.generate(prompt)
 a_good_boy = Doggo('Chewy')
 a_good_boy.generate(new_trick)
 a_good_boy.do_trick()
@@ -154,16 +172,16 @@ all_funcs = inspect.getmembers(
 [f for f in all_funcs if f._is_generative]
 ```
 
-### Integrate database
+### **Database integration**
 
-Clients can integrate custom database solutions to save the generated code, function name, and, if available, arguments and keyword arguments. This could be useful in large pipelines for embedding generated code. That could later be retreived given a similar input so that the model does not need to be run again.
+Clients can integrate custom database solutions to save the generated code, function name, and, if available, arguments and keyword arguments. This could be useful in large pipelines for embedding generated code offline. At run-time cachced embedded code could later be retreived given a similar input.
 
 ```python
 import redis
 
 from generative.functions import adapt
 from generative.metaclasses import AbstractDatabase
-from models import claude
+from models import LLM
 
 class VectorDB(AbstractDatabase):
     def __init__(self):
@@ -192,9 +210,7 @@ class VectorDB(AbstractDatabase):
 class Demo():
     db = VectorDB()
 
-    @adapt(model=claude, critic=claude, database=db)
+    @adapt(model=LLM, critic=LLM, database=db)
     def func(self):
         pass # some functionality to self-heal or adapt
 ```
-
-### Code Injection
