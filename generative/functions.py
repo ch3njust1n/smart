@@ -54,7 +54,7 @@ def adapt(
 
         def wrapper(self, *args: Any, **kwargs: Any) -> Any:
             nonlocal code
-            cached_code = ""
+            has_cached_code = False
             func_name = to_func_name(func_source)
 
             if database:
@@ -65,10 +65,10 @@ def adapt(
                         "kwargs": kwargs,
                     }
                 )
-                cached_code = database.contains(query)
+                has_cached_code = database.contains(query)
 
-                if cached_code:
-                    return cached_code
+                if has_cached_code:
+                    return database.get(query)
 
             # Here, we can access `self` and get all functions of its class
             class_functions = inspect.getmembers(
@@ -119,7 +119,7 @@ def adapt(
                             "kwargs": kwargs,
                             "generated_code": code,
                         }
-                        database.add(capability)
+                        database.set(capability)
                     except Exception as e:
                         raise DatabaseException(
                             "An error occurred while adding to the database"
