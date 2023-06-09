@@ -13,7 +13,6 @@ from .utils import (
     extract_func_name,
     format_binary_output,
     is_valid_syntax,
-    to_func_name,
 )
 
 from .prompt import (
@@ -55,7 +54,8 @@ def adapt(
         def wrapper(self, *args: Any, **kwargs: Any) -> Any:
             nonlocal code
             has_cached_code = False
-            func_name = to_func_name(func_source)
+            func_name = extract_func_name(func_source)
+            is_semantically_correct = False
 
             if database:
                 query = str(
@@ -68,16 +68,14 @@ def adapt(
                 has_cached_code = database.contains(query)
 
                 if has_cached_code:
-                    return database.get(query)
+                    code = database.get(query)
 
-            # Here, we can access `self` and get all functions of its class
-            class_functions = inspect.getmembers(
-                self.__class__, predicate=inspect.isfunction
-            )
+            elif model and func_source:
+                # Here, we can access `self` and get all functions of its class
+                class_functions = inspect.getmembers(
+                    self.__class__, predicate=inspect.isfunction
+                )
 
-            is_semantically_correct = False
-
-            if model and func_source:
                 # Format the generative function here, inside the wrapper,
                 # where you have access to `self`
                 prompt = format_generative_function(func_source, class_functions)
