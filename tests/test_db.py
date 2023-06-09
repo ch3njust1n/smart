@@ -52,7 +52,8 @@ def mock_anthropic_check_true():
 def mock_vector_db():
     mock_db = VectorDB()
     mock_db.contains = MagicMock(return_value=True)
-    mock_db.get = MagicMock(return_value="""
+    mock_db.get = MagicMock(
+        return_value="""
         def fibonacci(n):
             if n == 0:
                 return 0
@@ -60,7 +61,8 @@ def mock_vector_db():
                 return 1
             else:
                 return fibonacci(n-1) + fibonacci(n-2)
-    """)
+    """
+    )
     mock_db.set = MagicMock()
     return mock_db
 
