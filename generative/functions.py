@@ -13,7 +13,6 @@ from .utils import (
     extract_func_name,
     format_binary_output,
     is_valid_syntax,
-    to_func_name,
 )
 
 from .prompt import (
@@ -54,8 +53,8 @@ def adapt(
 
         def wrapper(self, *args: Any, **kwargs: Any) -> Any:
             nonlocal code
-            cached_code = ""
-            func_name = to_func_name(func_source)
+            has_cached_code = False
+            func_name = extract_func_name(func_source)
 
             if database:
                 query = str(
@@ -65,19 +64,19 @@ def adapt(
                         "kwargs": kwargs,
                     }
                 )
-                cached_code = database.contains(query)
+                has_cached_code = database.contains(query)
 
-                if cached_code:
-                    return cached_code
+                if has_cached_code:
+                    code = database.get(query)
 
-            # Here, we can access `self` and get all functions of its class
-            class_functions = inspect.getmembers(
-                self.__class__, predicate=inspect.isfunction
-            )
+            if not has_cached_code and model and func_source:
+                is_semantically_correct = False
 
-            is_semantically_correct = False
+                # Here, we can access `self` and get all functions of its class
+                class_functions = inspect.getmembers(
+                    self.__class__, predicate=inspect.isfunction
+                )
 
-            if model and func_source:
                 # Format the generative function here, inside the wrapper,
                 # where you have access to `self`
                 prompt = format_generative_function(func_source, class_functions)
@@ -88,7 +87,10 @@ def adapt(
                     output = critic(prompt)
                     is_semantically_correct = format_binary_output(output)
 
-            if code.strip() == "" or (critic and not is_semantically_correct):
+                if not is_semantically_correct:
+                    return func(self, *args, **kwargs)
+
+            if code.strip() == "":
                 return func(self, *args, **kwargs)
             else:
                 # TODO: sanitize given function using traditional methods and LLM
@@ -119,7 +121,7 @@ def adapt(
                             "kwargs": kwargs,
                             "generated_code": code,
                         }
-                        database.add(capability)
+                        database.set(capability)
                     except Exception as e:
                         raise DatabaseException(
                             "An error occurred while adding to the database"

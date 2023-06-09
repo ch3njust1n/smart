@@ -60,7 +60,7 @@ def generate_attribute(
 
                     def method_not_found(*args, **kwargs):
                         func_name = to_func_name(name)
-                        cached_code = ""
+                        has_cached_code = ""
 
                         if database:
                             query = str(
@@ -70,13 +70,13 @@ def generate_attribute(
                                     "kwargs": kwargs,
                                 }
                             )
-                            cached_code = database.contains(query)
+                            has_cached_code = database.contains(query)
 
-                            if cached_code:
-                                return cached_code
+                            if has_cached_code:
+                                return database.get(query)
 
                         # If model is specified and callable, use it to generate the output string
-                        if not cached_code and model is not None:
+                        if not has_cached_code and model is not None:
                             # This will return a list of tuples where the first item is the name of
                             # the method and the second item is the method itself. If you only want
                             # the names, you can do:
@@ -110,7 +110,7 @@ def generate_attribute(
                                         "kwargs": kwargs,
                                         "generated_code": func_source,
                                     }
-                                    database.add(capability)
+                                    database.set(capability)
                                 except Exception as e:
                                     raise DatabaseException(
                                         "An error occurred while adding to the database"

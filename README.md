@@ -161,15 +161,18 @@ Clients can integrate custom database solutions to save the generated code, func
 import redis
 
 from generative.functions import adapt
-from generative.classes import AbstractDatabase
+from generative.metaclasses import AbstractDatabase
 from models import claude
 
 class VectorDB(AbstractDatabase):
     def __init__(self):
         self.db = redis.Redis(host='localhost', port=6379, db=0)
+
+    def contains(self, key: str) -> bool:
+        return self.db.exists(key)
     
-    def find(self, query: str) -> List[Dict] :
-        self.db.get(query)
+    def get(self, query: str) -> List[Dict] :
+        return self.db.get(query)
 
     """
     data will always take this form:
@@ -181,16 +184,15 @@ class VectorDB(AbstractDatabase):
         "kwargs": {...},
     }
     """
-    def add(self, data: str) -> None:
+    def set(self, data: Any) -> None:
         key: str = data.function_name
         self.db.set(key, data)
 
 class Demo():
-    def __init__(self):
-        self.db = VectorDB()
+    db = VectorDB()
 
-    @adapt(model=claude, critic=claude)
-    def func():
+    @adapt(model=claude, critic=claude, database=db)
+    def func(self):
         pass # some functionality to self-heal or adapt
 ```
 

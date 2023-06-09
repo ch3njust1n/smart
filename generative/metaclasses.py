@@ -45,7 +45,7 @@ class AbstractDatabase(ABC):
         pass
 
     @abstractmethod
-    def find(self, query: str) -> Any:
+    def get(self, query: str) -> Any:
         """
         Executes a given query against the database.
 
@@ -55,7 +55,7 @@ class AbstractDatabase(ABC):
         pass
 
     @abstractmethod
-    def add(self, data: Any) -> None:
+    def set(self, data: Any) -> None:
         """
         Inserts data into the database.
 
@@ -160,7 +160,9 @@ class GenerativeMetaClass(BaseMetaClass):
                     }
                 )
                 if not database.contains(capability):
-                    database.add(capability)
+                    database.set(capability)
+                else:
+                    code = database.get(capability)
             except Exception as e:
                 raise DatabaseException(
                     "An error occurred while adding to the database"
