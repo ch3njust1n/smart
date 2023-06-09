@@ -170,11 +170,8 @@ class VectorDB(AbstractDatabase):
 
     def contains(self, key: str) -> bool:
         return self.db.exists(key)
-
-    def add(self, key: str, value: Any):
-        self.db.set(key, value)
     
-    def find(self, query: str) -> List[Dict] :
+    def get(self, query: str) -> List[Dict] :
         return self.db.get(query)
 
     """
@@ -187,14 +184,14 @@ class VectorDB(AbstractDatabase):
         "kwargs": {...},
     }
     """
-    def add(self, data: str) -> None:
+    def set(self, data: Any) -> None:
         key: str = data.function_name
         self.db.set(key, data)
 
 class Demo():
     db = VectorDB()
 
-    @adapt(model=claude, critic=claude, db=db)
+    @adapt(model=claude, critic=claude, database=db)
     def func(self):
         pass # some functionality to self-heal or adapt
 ```
