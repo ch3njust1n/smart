@@ -156,6 +156,7 @@ class Doggo(metaclass=GenerativeMetaClass):
         self.stomach = treat
 
 prompt = "Write a function with the header `def do_trick(self)` that returns a string '*sit*'"
+prompt = format_generative_function(prompt)
 new_trick = GPT3.generate(prompt)
 a_good_boy = Doggo('Chewy')
 a_good_boy.generate(new_trick)
