@@ -161,7 +161,7 @@ Clients can integrate custom database solutions to save the generated code, func
 import redis
 
 from generative.functions import adapt
-from generative.classes import AbstractDatabase
+from generative.metaclasses import AbstractDatabase
 from models import claude
 
 class VectorDB(AbstractDatabase):
@@ -186,11 +186,10 @@ class VectorDB(AbstractDatabase):
         self.db.set(key, data)
 
 class Demo():
-    def __init__(self):
-        self.db = VectorDB()
+    db = VectorDB()
 
-    @adapt(model=claude, critic=claude)
-    def func():
+    @adapt(model=claude, critic=claude, db=db)
+    def func(self):
         pass # some functionality to self-heal or adapt
 ```
 
