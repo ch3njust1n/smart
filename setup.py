@@ -18,6 +18,7 @@ setup(
             "pre-commit>=3.3.2",
             "pytest>=7.3.1",
             "pytest-mock>=3.10.0",
+            "redis>=4.5.5",
             "tox>=4.5.2",
         ]
     },
