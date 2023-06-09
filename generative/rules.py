@@ -5,6 +5,7 @@ Only generate Python code.
 Generate a function with the same number of parameters as the original function!
 
 Don'ts:
+Do not add the self parameter to the function.
 Do not write a driver program.
 Do not comment.
 Do not explain the code.

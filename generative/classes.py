@@ -3,6 +3,7 @@ import textwrap
 from typing import Callable, Any, Optional, Type
 
 from .utils import (
+    clean_function,
     to_func_name,
     is_incomplete_code,
     is_valid_syntax,
@@ -94,7 +95,7 @@ def generate_attribute(
                             prompt = format_generative_function_from_input(
                                 func_name, kwargs, context=available_funcs
                             )
-                            func_source = textwrap.dedent(model(prompt))
+                            func_source = clean_function(model(prompt))
 
                             if not is_valid_syntax(func_source):
                                 raise SyntaxError("Invalid syntax")
