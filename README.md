@@ -141,6 +141,7 @@ prompt = format_generative_function(prompt)
 new_trick = gpt3(prompt)
 a_good_boy = Doggo('Chewy')
 a_good_boy.generate(new_trick)
+a_good_boy.do_trick()
 a_good_boy.set_treat('roast beef')
 ```
 
