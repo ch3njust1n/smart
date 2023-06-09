@@ -167,9 +167,15 @@ from models import claude
 class VectorDB(AbstractDatabase):
     def __init__(self):
         self.db = redis.Redis(host='localhost', port=6379, db=0)
+
+    def contains(self, key: str) -> bool:
+        return self.db.exists(key)
+
+    def add(self, key: str, value: Any):
+        self.db.set(key, value)
     
     def find(self, query: str) -> List[Dict] :
-        self.db.get(query)
+        return self.db.get(query)
 
     """
     data will always take this form:
