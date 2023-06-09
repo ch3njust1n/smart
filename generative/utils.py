@@ -1,5 +1,7 @@
 import re
 import ast
+import textwrap
+from typing import Optional
 
 """
 This function takes a string that represents a function.
@@ -24,6 +26,40 @@ def remove_prepended(func_string: str, end_marker="### END FUNCTION ###") -> str
         func_string = func_string[: end_marker_index + len(end_marker)]
 
     return func_string
+
+
+"""
+Remove the 'self' parameter from a function header if it exists.
+
+Args:
+    func_str: A string representing a Python function.
+
+Returns:
+    A string representing the modified Python function.
+"""
+
+
+def remove_self_param(function_code: str) -> Optional[str]:
+    parts = re.split(r'(?<=\()\s*self\b,?\s*', function_code)
+    return ''.join(parts)
+
+
+"""
+This function takes a string that represents a function.
+It formats the function to be valid Python class function.
+
+Args:
+    function_code (str): A string that represents a function.
+
+Returns:
+    A string that represents a function, with any text above the function header removed.
+"""
+
+
+def clean_function(function_code: str) -> Optional[str]:
+    function_code = remove_self_param(function_code)
+    function_code = remove_prepended(function_code)
+    return textwrap.dedent(function_code)
 
 
 """

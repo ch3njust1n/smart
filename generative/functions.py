@@ -9,6 +9,7 @@ from RestrictedPython import compile_restricted
 from .metaclasses import AbstractDatabase, DatabaseException
 
 from .utils import (
+    clean_function,
     remove_prepended,
     extract_func_name,
     format_binary_output,
@@ -80,7 +81,7 @@ def adapt(
                 # Format the generative function here, inside the wrapper,
                 # where you have access to `self`
                 prompt = format_generative_function(func_source, class_functions)
-                code = model(prompt)
+                code = clean_function(model(prompt))
 
                 if critic:
                     prompt = format_semantic_checker(code, input="", context="")
@@ -183,7 +184,7 @@ def catch(model: Optional[Callable[[str], str]] = None) -> Callable:
                 # If there was an exception, and an LLM is provided, use it
                 if model and func_source:
                     prompt = format_generative_function(func_source)
-                    code = model(prompt)
+                    code = clean_function(model(prompt))
 
                     if code.strip() != "":
                         global_vars: Dict[str, Any] = {

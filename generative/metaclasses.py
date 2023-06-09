@@ -11,7 +11,7 @@ from typing import (
 from .utils import (
     extract_func_name,
     is_valid_syntax,
-    remove_prepended,
+    clean_function,
 )
 
 """
@@ -119,13 +119,14 @@ class GenerativeMetaClass(BaseMetaClass):
         bases: Tuple[Type[Any], ...],
         attrs: Dict[str, Any],
     ) -> None:
-        cls.is_generative = False  # type: ignore
+        cls.is_generative = True  # type: ignore
+        cls.generate = GenerativeMetaClass._generate_function()  # type: ignore
 
     """
-    Generate and add a method to the class.
+    Generate and add a method to the instance.
 
     This function takes Python code as input, validates its syntax,
-    compiles it, and adds the resulting function as a method to the class.
+    compiles it, and adds the resulting function to the instance.
 
     Args:
         cls: The class to which the method should be added.
@@ -136,38 +137,39 @@ class GenerativeMetaClass(BaseMetaClass):
     """
 
     @staticmethod
-    def generate(
-        cls: Type[Any], code: str, database: Optional[AbstractDatabase] = None
-    ) -> None:
-        cls.is_generative = True  # type: ignore
-        local_vars: Dict[str, Any] = {}
+    def _generate_function():
+        def generate(
+            self: Type[Any], code: str, database: Optional[AbstractDatabase] = None
+        ) -> None:
+            local_vars: Dict[str, Any] = {}
 
-        code = remove_prepended(code)
-        code = textwrap.dedent(code)
+            code = clean_function(code)
 
-        if not is_valid_syntax(code):
-            raise SyntaxError("Invalid syntax")
+            if not is_valid_syntax(code):
+                raise SyntaxError("Invalid syntax")
 
-        func_name = extract_func_name(code)
+            func_name = extract_func_name(code)
 
-        if database:
-            try:
-                capability = str(
-                    {
-                        "function_name": func_name,
-                        "args": {},
-                        "kwargs": {},
-                    }
-                )
-                if not database.contains(capability):
-                    database.set(capability)
-                else:
-                    code = database.get(capability)
-            except Exception as e:
-                raise DatabaseException(
-                    "An error occurred while adding to the database"
-                ) from e
+            if database:
+                try:
+                    capability = str(
+                        {
+                            "function_name": func_name,
+                            "args": {},
+                            "kwargs": {},
+                        }
+                    )
+                    if not database.contains(capability):
+                        database.set(capability)
+                    else:
+                        code = database.get(capability)
+                except Exception as e:
+                    raise DatabaseException(
+                        "An error occurred while adding to the database"
+                    ) from e
 
-        byte_code = compile(code, filename=func_name, mode="exec")
-        exec(byte_code, {}, local_vars)
-        setattr(cls, func_name, local_vars[func_name])
+            byte_code = compile(code, filename=func_name, mode="exec")
+            exec(byte_code, {}, local_vars)
+            setattr(self, func_name, local_vars[func_name])
+        
+        return generate

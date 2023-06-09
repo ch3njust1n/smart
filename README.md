@@ -139,8 +139,8 @@ class Doggo(metaclass=GenerativeMetaClass):
 prompt = "Write a function with the header `def do_trick(self)` that returns a string '*sit*'"
 prompt = format_generative_function(prompt)
 new_trick = gpt3(prompt)
-GenerativeMetaClass.generate(Doggo, new_trick)
 a_good_boy = Doggo('Chewy')
+a_good_boy.generate(new_trick)
 a_good_boy.set_treat('roast beef')
 ```
 
