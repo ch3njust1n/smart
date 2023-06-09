@@ -55,7 +55,6 @@ def adapt(
             nonlocal code
             has_cached_code = False
             func_name = extract_func_name(func_source)
-            is_semantically_correct = False
 
             if database:
                 query = str(
@@ -70,7 +69,9 @@ def adapt(
                 if has_cached_code:
                     code = database.get(query)
 
-            elif model and func_source:
+            if not has_cached_code and model and func_source:
+                is_semantically_correct = False
+
                 # Here, we can access `self` and get all functions of its class
                 class_functions = inspect.getmembers(
                     self.__class__, predicate=inspect.isfunction
@@ -86,7 +87,10 @@ def adapt(
                     output = critic(prompt)
                     is_semantically_correct = format_binary_output(output)
 
-            if code.strip() == "" or (critic and not is_semantically_correct):
+                if not is_semantically_correct:
+                    return func(self, *args, **kwargs)
+
+            if code.strip() == "":
                 return func(self, *args, **kwargs)
             else:
                 # TODO: sanitize given function using traditional methods and LLM
