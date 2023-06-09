@@ -20,7 +20,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pytest black flake8
+        pip install pytest black flake8 redis
         pip install -r requirements.txt
 
     - name: Check code formatting with Black
