@@ -4,7 +4,7 @@ import textwrap
 import unittest.mock as mock
 from unittest.mock import Mock
 
-from .model import gpt4
+from .model import GPT4
 
 
 def test_generated_class():
@@ -81,7 +81,7 @@ def test_generated_stringified_class_with_gpt(mock_gpt4_create_class):
         Do not add any additional information.
         Just repeat the JSON back to me exactly.
         """
-        properties = textwrap.dedent(gpt4(prompt))
+        properties = textwrap.dedent(GPT4.generate(prompt))
         properties = eval(properties)
         global_vars = {}
         func_source = properties["my_func"]

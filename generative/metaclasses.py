@@ -77,6 +77,31 @@ class DatabaseException(Exception):
 
 
 """
+This is an abstract base class that represents a generative text model.
+
+Developers can extend this class to implement their own model classes
+that can be used anywhere an object of type `AbstractGenerativeModel` is expected.
+
+Subclasses must implement the following methods:
+
+generate(self, prompt: str) -> str:
+    Generates code from a prompt.
+"""
+
+
+class AbstractGenerativeModel(ABC):
+    @abstractmethod
+    def generate(self, prompt: str) -> str:
+        """
+        Generates code from a prompt.
+
+        :param prompt: The prompt to generate code from.
+        :return: The generated code.
+        """
+        pass
+
+
+"""
 BaseMetaClass is a metaclass that defines a single attribute: is_generative.
 
 This attribute is intended to be used in subclasses to indicate whether a class is generative.

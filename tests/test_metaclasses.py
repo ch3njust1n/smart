@@ -4,8 +4,7 @@ import unittest.mock as mock
 from unittest.mock import Mock
 from io import StringIO
 
-from .metaclasses.demo import Car, Doggo
-from .model import gpt4
+from .model import GPT4
 from generative.metaclasses import GenerativeMetaClass
 from generative.prompt import format_generative_function
 
@@ -59,7 +58,7 @@ def test_generative_metaclass_with_gpt(mock_gpt4_metaclass):
     with mock.patch("openai.ChatCompletion.create", return_value=mock_gpt4_metaclass):
         prompt = "Write a function with the header `def do_trick(self)` that returns a string '*sit*'"
         prompt = format_generative_function(prompt)
-        new_trick = gpt4(prompt)
+        new_trick = GPT4.generate(prompt)
         a_good_boy = Doggo("Chewy")
         a_good_boy.generate(new_trick)
         assert a_good_boy.do_trick() == "*sit*"

@@ -1,7 +1,7 @@
 import pytest
 import unittest.mock as mock
 from unittest.mock import Mock
-from .model import gpt4
+from .model import GPT4
 from generative.classes import generate_attribute
 
 
@@ -66,7 +66,7 @@ def test_imagined_action_with_gpt(model_resp, mock_gpt4_generate_attributes):
         "openai.ChatCompletion.create", return_value=mock_gpt4_generate_attributes
     ):
 
-        @generate_attribute(model=gpt4)
+        @generate_attribute(model=GPT4)
         class Mobile(object):
             def __init__(self):
                 pass

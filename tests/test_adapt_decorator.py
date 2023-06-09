@@ -3,7 +3,7 @@ import pytest
 import unittest.mock as mock
 from unittest.mock import Mock, MagicMock
 from generative.functions import adapt
-from .model import gpt4, claude
+from .model import GPT4, Claude
 
 
 def test_add():
@@ -62,7 +62,7 @@ def mock_anthropic_check_true():
     return response
 
 
-@pytest.mark.parametrize("model,critic", [(gpt4, claude)])
+@pytest.mark.parametrize("model,critic", [(GPT4, Claude)])
 def test_selfheal_with_gpt4(
     model, critic, mock_gpt4_selfheal, mock_anthropic_check_true
 ):
@@ -83,7 +83,7 @@ def test_selfheal_with_gpt4(
             assert fibonacci(8) == 21
 
 
-@pytest.mark.parametrize("model,critic", [(gpt4, claude)])
+@pytest.mark.parametrize("model,critic", [(GPT4, Claude)])
 def test_adapt_with_gpt(model, critic, mock_gpt4_selfheal, mock_anthropic_check_true):
     with mock.patch("openai.ChatCompletion.create", return_value=mock_gpt4_selfheal):
         with mock.patch(
@@ -113,7 +113,7 @@ def mock_is_generative():
     return response
 
 
-@pytest.mark.parametrize("model,result", [(gpt4, True), (None, False)])
+@pytest.mark.parametrize("model,result", [(GPT4, True), (None, False)])
 def test_is_generative(model, result, mock_is_generative):
     with mock.patch("openai.ChatCompletion.create", return_value=mock_is_generative):
 

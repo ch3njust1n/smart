@@ -1,7 +1,7 @@
 import pytest
 import unittest.mock as mock
-from unittest.mock import Mock, MagicMock
-from .model import claude
+from unittest.mock import MagicMock
+from .model import Claude
 from generative.prompt import format_semantic_checker
 from generative.utils import format_binary_output
 
@@ -30,7 +30,7 @@ def test_is_semantically_correct(mock_anthropic_check_true):
         """
         input = {"a": 1, "b": 2}
         prompt = format_semantic_checker(code, input, context="")
-        output = claude(prompt)
+        output = Claude.generate(prompt)
         output = format_binary_output(output)
 
         assert output
@@ -49,7 +49,7 @@ def test_incorrect_factorial(mock_anthropic_check_false):
         """
         input = "5"
         prompt = format_semantic_checker(code, input, context="")
-        output = claude(prompt)
+        output = Claude.generate(prompt)
         output = format_binary_output(output)
 
         assert output == False
@@ -66,7 +66,7 @@ def test_incorrect_valueerror(mock_anthropic_check_false):
             x = 0
         """
         prompt = format_semantic_checker(code, input, context="")
-        output = claude(prompt)
+        output = Claude.generate(prompt)
         output = format_binary_output(output)
 
         assert output == False
@@ -84,7 +84,7 @@ def test_incorrect_zerodivisionerror(mock_anthropic_check_true):
         """
 
         prompt = format_semantic_checker(code, input, context="")
-        output = claude(prompt)
+        output = Claude.generate(prompt)
         output = format_binary_output(output)
 
         assert output
@@ -100,7 +100,7 @@ def test_incorrect_io_with(mock_anthropic_check_false):
         """
 
         prompt = format_semantic_checker(code, input, context="")
-        output = claude(prompt)
+        output = Claude.generate(prompt)
         output = format_binary_output(output)
 
         assert output == False
