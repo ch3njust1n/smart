@@ -40,8 +40,8 @@ Returns:
 
 
 def remove_self_param(function_code: str) -> Optional[str]:
-    parts = re.split(r'(?<=\()\s*self\b,?\s*', function_code)
-    return ''.join(parts)
+    parts = re.split(r"(?<=\()\s*self\b,?\s*", function_code)
+    return "".join(parts)
 
 
 """

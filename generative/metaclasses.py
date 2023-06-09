@@ -171,5 +171,5 @@ class GenerativeMetaClass(BaseMetaClass):
             byte_code = compile(code, filename=func_name, mode="exec")
             exec(byte_code, {}, local_vars)
             setattr(self, func_name, local_vars[func_name])
-        
+
         return generate
