@@ -3,7 +3,7 @@ import pytest
 import unittest.mock as mock
 from unittest.mock import Mock
 from generative.functions import catch
-from .model import gpt4
+from .model import GPT4
 
 
 @pytest.fixture
@@ -19,7 +19,7 @@ def mock_gpt4_catch():
     return response
 
 
-@pytest.mark.parametrize("model", [gpt4])
+@pytest.mark.parametrize("model", [GPT4])
 def test_catch_with_gpt(model, mock_gpt4_catch):
     with mock.patch("openai.ChatCompletion.create", return_value=mock_gpt4_catch):
         # Define a function that raises an exception

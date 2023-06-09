@@ -5,7 +5,7 @@ from typing import Any, Dict, List
 
 from generative.functions import adapt
 from generative.metaclasses import AbstractDatabase
-from .model import gpt4, claude
+from .model import GPT4, Claude
 
 
 class VectorDB(AbstractDatabase):
@@ -67,7 +67,7 @@ def mock_vector_db():
     return mock_db
 
 
-@pytest.mark.parametrize("model,critic", [(gpt4, claude)])
+@pytest.mark.parametrize("model,critic", [(GPT4, Claude)])
 def test_selfheal_with_gpt4(
     model, critic, mock_gpt4_selfheal, mock_anthropic_check_true, mock_vector_db
 ):

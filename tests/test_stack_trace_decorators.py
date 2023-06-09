@@ -3,7 +3,7 @@ import pytest
 import unittest.mock as mock
 from unittest.mock import Mock
 from generative.functions import stack_trace
-from .model import gpt4
+from .model import GPT4
 
 
 @pytest.fixture
@@ -34,7 +34,7 @@ Suggestions for how to fix the error:
     return response
 
 
-@pytest.mark.parametrize("model", [gpt4])
+@pytest.mark.parametrize("model", [GPT4])
 def test_func_stack_trace_with_gpt(model, mock_gpt4_stack_trace_function):
     with mock.patch(
         "openai.ChatCompletion.create", return_value=mock_gpt4_stack_trace_function
@@ -81,7 +81,7 @@ Suggestions for how to fix the error:
     return response
 
 
-@pytest.mark.parametrize("model", [gpt4])
+@pytest.mark.parametrize("model", [GPT4])
 def test_class_stack_trace_decorator_with_gpt(model, mock_gpt4_stack_trace_class):
     with mock.patch(
         "openai.ChatCompletion.create", return_value=mock_gpt4_stack_trace_class

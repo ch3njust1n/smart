@@ -6,7 +6,11 @@ from typing import Callable, Any, Optional, Dict
 
 from RestrictedPython import compile_restricted
 
-from .metaclasses import AbstractDatabase, DatabaseException
+from .metaclasses import (
+    AbstractDatabase,
+    DatabaseException,
+    AbstractGenerativeModel,
+)
 
 from .utils import (
     clean_function,
@@ -27,8 +31,8 @@ A decorator that replaces the behavior of the decorated function with arbitrary 
 
 Args:
     code  (string, optional): A string of Python code that returns a result.
-    model (Callable, optional): LLM to generate code.
-    critic (Callable, optional): LLM to review generated code from `model`.
+    model (AbstractGenerativeModel, optional): LLM to generate code.
+    critic (AbstractGenerativeModel, optional): LLM to review generated code from `model`.
     database (AbstractDatabase, optional): An instance of a class that implements the
                                            AbstractDatabase interface.
 
@@ -39,8 +43,8 @@ Returns:
 
 def adapt(
     code: str = "",
-    model: Optional[Callable[[str], str]] = None,
-    critic: Optional[Callable[[str], str]] = None,
+    model: Optional[AbstractGenerativeModel] = None,
+    critic: Optional[AbstractGenerativeModel] = None,
     database: Optional[AbstractDatabase] = None,
 ) -> Callable:
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -81,11 +85,11 @@ def adapt(
                 # Format the generative function here, inside the wrapper,
                 # where you have access to `self`
                 prompt = format_generative_function(func_source, class_functions)
-                code = clean_function(model(prompt))
+                code = clean_function(model.generate(prompt))
 
                 if critic:
                     prompt = format_semantic_checker(code, input="", context="")
-                    output = critic(prompt)
+                    output = critic.generate(prompt)
                     is_semantically_correct = format_binary_output(output)
 
                 if not is_semantically_correct:
@@ -150,7 +154,7 @@ If the LLM function is absent or its code also raises an exception, the original
 re-raised, allowing for upstream error handling or user notification.
 
 Args:
-    model (Callable[[str], str], optional): A function that takes a string of Python code as input
+    model (AbstractGenerativeModel, optional): A model that takes a string of Python code as input
     and returns a string of Python code as output. Typically, this would be a Language Learning
     Model that can generate alternative implementations of the input function.
 
@@ -160,7 +164,7 @@ Returns:
 """
 
 
-def catch(model: Optional[Callable[[str], str]] = None) -> Callable:
+def catch(model: Optional[AbstractGenerativeModel] = None) -> Callable:
     def extract_func_name(code: str) -> str:
         match = re.search(r"def\s+(\w+)", code)
         if match:
@@ -184,7 +188,7 @@ def catch(model: Optional[Callable[[str], str]] = None) -> Callable:
                 # If there was an exception, and an LLM is provided, use it
                 if model and func_source:
                     prompt = format_generative_function(func_source)
-                    code = clean_function(model(prompt))
+                    code = clean_function(model.generate(prompt))
 
                     if code.strip() != "":
                         global_vars: Dict[str, Any] = {
@@ -229,7 +233,7 @@ the stack trace, enhancing error reporting or debugging. In the absence of an LL
 fails, the original exception is propagated.
 
 Args:
-    model (Callable[[str], str], optional): A function that takes a stack trace as a string
+    model (AbstractGenerativeModel, optional): A model that takes a stack trace as a string
         and returns a string to be used as the message for a new exception.
 
 Returns:
@@ -238,7 +242,7 @@ Returns:
 """
 
 
-def stack_trace(model: Optional[Callable[[str], str]] = None) -> Callable:
+def stack_trace(model: Optional[AbstractGenerativeModel] = None) -> Callable:
     def decorator(obj: Any) -> Any:
         if inspect.isclass(obj):
 
@@ -263,7 +267,7 @@ def stack_trace(model: Optional[Callable[[str], str]] = None) -> Callable:
                     # If an LLM function is provided, pass the stack trace to it
                     if model:
                         prompt = format_stack_trace(stack_trace)
-                        summary = textwrap.dedent(model(prompt))
+                        summary = textwrap.dedent(model.generate(prompt))
                         new_exception_message = f"{stack_trace}\n{summary}"
 
                         # Raise a new exception with the modified message

@@ -9,7 +9,11 @@ from .utils import (
     is_valid_syntax,
 )
 
-from .metaclasses import AbstractDatabase, DatabaseException
+from .metaclasses import (
+    AbstractDatabase,
+    DatabaseException,
+    AbstractGenerativeModel,
+)
 from .prompt import format_generative_function_from_input
 
 """
@@ -42,7 +46,7 @@ Raises:
 
 
 def generate_attribute(
-    model: Optional[Callable[[str], str]],
+    model: Optional[AbstractGenerativeModel],
     database: Optional[AbstractDatabase] = None,
 ) -> Callable[[Type[Any]], Type[Any]]:
     def decorator(cls: Type[Any]) -> Type[Any]:
@@ -95,7 +99,7 @@ def generate_attribute(
                             prompt = format_generative_function_from_input(
                                 func_name, kwargs, context=available_funcs
                             )
-                            func_source = clean_function(model(prompt))
+                            func_source = clean_function(model.generate(prompt))
 
                             if not is_valid_syntax(func_source):
                                 raise SyntaxError("Invalid syntax")
