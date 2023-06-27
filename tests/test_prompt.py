@@ -28,9 +28,10 @@ def test_is_semantically_correct(mock_anthropic_check_true):
         def add(a, b):
             return sum([a, b])
         """
+        claude = Claude()
         input = {"a": 1, "b": 2}
         prompt = format_semantic_checker(code, input, context="")
-        output = Claude.generate(prompt)
+        output = claude.generate(prompt)
         output = format_binary_output(output)
 
         assert output
@@ -48,8 +49,9 @@ def test_incorrect_factorial(mock_anthropic_check_false):
                 return n - factorial(n-1)
         """
         input = "5"
+        claude = Claude()
         prompt = format_semantic_checker(code, input, context="")
-        output = Claude.generate(prompt)
+        output = claude.generate(prompt)
         output = format_binary_output(output)
 
         assert output == False
@@ -65,8 +67,10 @@ def test_incorrect_valueerror(mock_anthropic_check_false):
         except ValueError:
             x = 0
         """
+
+        claude = Claude()
         prompt = format_semantic_checker(code, input, context="")
-        output = Claude.generate(prompt)
+        output = claude.generate(prompt)
         output = format_binary_output(output)
 
         assert output == False
@@ -83,8 +87,9 @@ def test_incorrect_zerodivisionerror(mock_anthropic_check_true):
             x = 0
         """
 
+        claude = Claude()
         prompt = format_semantic_checker(code, input, context="")
-        output = Claude.generate(prompt)
+        output = claude.generate(prompt)
         output = format_binary_output(output)
 
         assert output
@@ -99,8 +104,9 @@ def test_incorrect_io_with(mock_anthropic_check_false):
             f.write('some text')
         """
 
+        claude = Claude()
         prompt = format_semantic_checker(code, input, context="")
-        output = Claude.generate(prompt)
+        output = claude.generate(prompt)
         output = format_binary_output(output)
 
         assert output == False

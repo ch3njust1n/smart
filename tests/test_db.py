@@ -1,5 +1,6 @@
-import pytest
+import json
 import redis
+import pytest
 from unittest.mock import Mock, MagicMock, patch
 from typing import Any, Dict, List
 
@@ -13,10 +14,15 @@ class VectorDB(AbstractDatabase):
         self.db = redis.Redis(host="localhost", port=6379, db=0)
 
     def contains(self, key: str) -> bool:
-        return self.db.exists(key)
+        return bool(self.db.exists(key))
 
     def get(self, query: str) -> List[Dict]:
-        return self.db.get(query)
+        result = self.db.get(query)
+
+        if result is None:
+                return []
+        else:
+            return json.loads(result.decode("utf-8"))
 
     def set(self, data: Any) -> None:
         key: str = data["function_name"]
