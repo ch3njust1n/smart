@@ -75,11 +75,13 @@ To setup linting with `flake8` and auto formatting with `black`:
 Create a custom model class with a `generate()` function that takes a prompt and returns a string.
 
 All functionality in the `generative` package expects a model that inherits from the abstract class `AbstractGenerativeModel`.
+`generate()` must be marked with the `@classmethod` decorator.
 
 ```python
 from generative.metaclasses import AbstractGenerativeModel
 
 class LLM(AbstractGenerativeModel):
+    @classmethod
     def generate(self, prompt: str) -> str:
         # Must implement generate()
 ```

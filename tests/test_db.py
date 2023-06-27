@@ -20,7 +20,7 @@ class VectorDB(AbstractDatabase):
         result = self.db.get(query)
 
         if result is None:
-                return []
+            return []
         else:
             return json.loads(result.decode("utf-8"))
 

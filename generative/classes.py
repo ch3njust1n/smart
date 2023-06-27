@@ -105,7 +105,7 @@ def generate_attribute(
                                     capability = {
                                         "args": args,
                                         "kwargs": kwargs,
-                                        "generated_code": func_source
+                                        "generated_code": func_source,
                                     }
                                     database.set(func_name, capability)
                                 except Exception as e:

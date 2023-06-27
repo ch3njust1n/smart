@@ -87,7 +87,7 @@ def adapt(
                 # where you have access to `self`
                 prompt = format_generative_function(func_source, class_functions)
                 code = clean_function(model.generate(prompt))
-                print(f'code {time.time()}:\n{code}')
+                print(f"code {time.time()}:\n{code}")
 
                 if critic:
                     prompt = format_semantic_checker(code, input="", context="")
