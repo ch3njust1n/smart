@@ -1,4 +1,5 @@
 import re
+import time
 import inspect
 import textwrap
 import traceback
@@ -86,6 +87,7 @@ def adapt(
                 # where you have access to `self`
                 prompt = format_generative_function(func_source, class_functions)
                 code = clean_function(model.generate(prompt))
+                print(f"code {time.time()}:\n{code}")
 
                 if critic:
                     prompt = format_semantic_checker(code, input="", context="")
@@ -121,12 +123,11 @@ def adapt(
                 if database:
                     try:
                         capability = {
-                            "function_name": func_name,
                             "args": args,
                             "kwargs": kwargs,
                             "generated_code": code,
                         }
-                        database.set(capability)
+                        database.set(func_name, capability)
                     except Exception as e:
                         raise DatabaseException(
                             "An error occurred while adding to the database"

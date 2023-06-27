@@ -75,11 +75,13 @@ To setup linting with `flake8` and auto formatting with `black`:
 Create a custom model class with a `generate()` function that takes a prompt and returns a string.
 
 All functionality in the `generative` package expects a model that inherits from the abstract class `AbstractGenerativeModel`.
+`generate()` must be marked with the `@classmethod` decorator.
 
 ```python
 from generative.metaclasses import AbstractGenerativeModel
 
 class LLM(AbstractGenerativeModel):
+    @classmethod
     def generate(self, prompt: str) -> str:
         # Must implement generate()
 ```
@@ -194,18 +196,10 @@ class VectorDB(AbstractDatabase):
     def get(self, query: str) -> List[Dict] :
         return self.db.get(query)
 
-    """
-    data will always take this form:
-
-    data = {
-        "function_name": func_name,
-        "generated_code": code,
-        "args": {...},
-        "kwargs": {...},
-    }
-    """
-    def set(self, data: Any) -> None:
-        key: str = data.function_name
+    def set(self, key: str, data: Any) -> None:
+        # Implement custom versioning logic here
+        # query database by function name
+        # store data by versions e.g {func_name: {'version_1': data }}
         self.db.set(key, data)
 
 class Demo():
@@ -213,5 +207,5 @@ class Demo():
 
     @adapt(model=LLM, critic=LLM, database=db)
     def func(self):
-        pass # some functionality to self-heal or adapt
+        pass # functionality that requires adaptation
 ```

@@ -54,13 +54,13 @@ class AbstractDatabase(ABC):
         pass
 
     @abstractmethod
-    def set(self, data: Any) -> None:
+    def set(self, key: str, data: Any) -> None:
         """
         Inserts data into the database.
 
+        :param key: Key to be inserted.
         :param data: Data to be inserted, which will always take the form of a dictionary:
         data = {
-            "function_name": func_name,
             "generated_code": code,
             "args": {...},
             "kwargs": {...},
@@ -91,7 +91,7 @@ generate(self, prompt: str) -> str:
 
 class AbstractGenerativeModel(ABC):
     @abstractmethod
-    def generate(self, prompt: str) -> str:
+    def generate(cls, prompt: str) -> str:
         """
         Generates code from a prompt.
 
@@ -178,13 +178,12 @@ class GenerativeMetaClass(BaseMetaClass):
                 try:
                     capability = str(
                         {
-                            "function_name": func_name,
                             "args": {},
                             "kwargs": {},
                         }
                     )
                     if not database.contains(capability):
-                        database.set(capability)
+                        database.set(func_name, capability)
                     else:
                         code = database.get(capability)
                 except Exception as e:

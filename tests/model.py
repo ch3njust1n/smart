@@ -23,7 +23,8 @@ class GPT4(AbstractGenerativeModel):
         Source code of the generated function.
     """
 
-    def generate(prompt: str) -> str:
+    @classmethod
+    def generate(cls, prompt: str) -> str:
         openai.api_key = os.getenv("OPENAI_API_KEY")
 
         if openai.api_key is None:
@@ -56,7 +57,8 @@ class GPT3(AbstractGenerativeModel):
         Source code of the generated function.
     """
 
-    def generate(prompt: str) -> str:
+    @classmethod
+    def generate(cls, prompt: str) -> str:
         openai.api_key = os.getenv("OPENAI_API_KEY")
 
         if openai.api_key is None:
@@ -85,7 +87,8 @@ class Claude(AbstractGenerativeModel):
         Source code of the generated function.
     """
 
-    def generate(prompt: str) -> str:
+    @classmethod
+    def generate(cls, prompt: str) -> str:
         c = anthropic.Client(os.getenv("ANTHROPIC_API_KEY"))
         llm_code = c.completion(
             prompt=f"{anthropic.HUMAN_PROMPT} {prompt}{anthropic.AI_PROMPT}",

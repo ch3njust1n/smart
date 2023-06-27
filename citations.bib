@@ -1,6 +1,37 @@
 %%% Metaprogramming
 
+% 2006
+@misc{schmidhuber2006goedel,
+      title={Goedel Machines: Self-Referential Universal Problem Solvers Making Provably Optimal Self-Improvements},
+      author={Juergen Schmidhuber},
+      year={2006},
+      eprint={cs/0309048},
+      archivePrefix={arXiv},
+      primaryClass={cs.LO}
+}
+
+% 2011
+
+@inproceedings{steunebrink2011family,
+  title={A family of G{\"o}del machine implementations},
+  author={Steunebrink, Bas R and Schmidhuber, J{\"u}rgen},
+  booktitle={Artificial General Intelligence: 4th International Conference, AGI 2011, Mountain View, CA, USA, August 3-6, 2011. Proceedings 4},
+  pages={275--280},
+  year={2011},
+  organization={Springer}
+}
+
+
 % 2012
+@incollection{steunebrink2012towards,
+  title={Towards an actual g{\"o}del machine implementation: A lesson in self-reflective systems},
+  author={Steunebrink, Bas R and Schmidhuber, J{\~A}$1/4$rgen},
+  booktitle={Theoretical Foundations of Artificial General Intelligence},
+  pages={173--195},
+  year={2012},
+  publisher={Springer}
+}
+
 @book{vstuikys2012meta,
   title={Meta-programming and model-driven meta-program development: principles, processes and techniques},
   author={{\v{S}}tuikys, Vytautas and Dama{\v{s}}evi{\v{c}}ius, Robertas},
@@ -20,6 +51,17 @@
 
 
 %%% Code Repair
+
+% 2017
+@inproceedings{tan2017codeflaws,
+  title={Codeflaws: a programming competition benchmark for evaluating automated program repair tools},
+  author={Tan, Shin Hwei and Yi, Jooyong and Mechtaev, Sergey and Roychoudhury, Abhik and others},
+  booktitle={2017 IEEE/ACM 39th International Conference on Software Engineering Companion (ICSE-C)},
+  pages={180--182},
+  year={2017},
+  organization={IEEE}
+}
+
 
 % 2020
 @article{bieber2020learning,
@@ -55,21 +97,12 @@
 }
 
 @misc{austin2021program,
-      title={Program Synthesis with Large Language Models}, 
+      title={Program Synthesis with Large Language Models},
       author={Jacob Austin and Augustus Odena and Maxwell Nye and Maarten Bosma and Henryk Michalewski and David Dohan and Ellen Jiang and Carrie Cai and Michael Terry and Quoc Le and Charles Sutton},
       year={2021},
       eprint={2108.07732},
       archivePrefix={arXiv},
       primaryClass={cs.PL}
-}
-
-@inproceedings{tan2017codeflaws,
-  title={Codeflaws: a programming competition benchmark for evaluating automated program repair tools},
-  author={Tan, Shin Hwei and Yi, Jooyong and Mechtaev, Sergey and Roychoudhury, Abhik and others},
-  booktitle={2017 IEEE/ACM 39th International Conference on Software Engineering Companion (ICSE-C)},
-  pages={180--182},
-  year={2017},
-  organization={IEEE}
 }
 
 
@@ -114,7 +147,7 @@ url = {https://www.microsoft.com/en-us/research/publication/jigsaw-large-languag
 }
 
 @misc{ni2023lever,
-      title={LEVER: Learning to Verify Language-to-Code Generation with Execution}, 
+      title={LEVER: Learning to Verify Language-to-Code Generation with Execution},
       author={Ansong Ni and Srini Iyer and Dragomir Radev and Ves Stoyanov and Wen-tau Yih and Sida I. Wang and Xi Victoria Lin},
       year={2023},
       eprint={2302.08468},
@@ -127,6 +160,24 @@ url = {https://www.microsoft.com/en-us/research/publication/jigsaw-large-languag
   author={Nijkamp, Erik and Pang, Bo and Hayashi, Hiroaki and Tu, Lifu and Wang, Huan and Zhou, Yingbo and Savarese, Silvio and Xiong, Caiming},
   journal={arXiv preprint arXiv:2203.13474},
   year={2022}
+}
+
+@misc{pearce2022examining,
+      title={Examining Zero-Shot Vulnerability Repair with Large Language Models},
+      author={Hammond Pearce and Benjamin Tan and Baleegh Ahmad and Ramesh Karri and Brendan Dolan-Gavitt},
+      year={2022},
+      eprint={2112.02125},
+      archivePrefix={arXiv},
+      primaryClass={cs.CR}
+}
+
+@misc{perez2022red,
+      title={Red Teaming Language Models with Language Models},
+      author={Ethan Perez and Saffron Huang and Francis Song and Trevor Cai and Roman Ring and John Aslanides and Amelia Glaese and Nat McAleese and Geoffrey Irving},
+      year={2022},
+      eprint={2202.03286},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
 }
 
 @article{zirak2022improving,
@@ -218,13 +269,6 @@ url = {https://www.microsoft.com/en-us/research/publication/jigsaw-large-languag
 %%%% Large Language Models
 
 % 2021
-@article{austin2021program,
-  title={Program synthesis with large language models},
-  author={Austin, Jacob and Odena, Augustus and Nye, Maxwell and Bosma, Maarten and Michalewski, Henryk and Dohan, David and Jiang, Ellen and Cai, Carrie and Terry, Michael and Le, Quoc and others},
-  journal={arXiv preprint arXiv:2108.07732},
-  year={2021}
-}
-
 @misc{brundage2022lessons,
   title={Lessons learned on language model safety and misuse},
   author={Brundage, Miles and Mayer, Katie and Eloundou, Tyna and Agarwal, Sandhini and Adler, Steven and Krueger, Gretchen and Leike, Jan and Mishkin, Pamela},
@@ -283,11 +327,55 @@ url = {https://www.microsoft.com/en-us/research/publication/jigsaw-large-languag
   year={2023}
 }
 
-@article{chen2023teaching,
-  title={Teaching large language models to self-debug},
-  author={Chen, Xinyun and Lin, Maxwell and Sch{\"a}rli, Nathanael and Zhou, Denny},
-  journal={arXiv preprint arXiv:2304.05128},
-  year={2023}
+@misc{Chase2023langchain,
+  author = {hwchase17},
+  title = {langchain: Building applications with LLMs through composability},
+  year = {2023},
+  url = {https://github.com/hwchase17/langchain},
+}
+
+@misc{derczynski2023assessing,
+      title={Assessing Language Model Deployment with Risk Cards},
+      author={Leon Derczynski and Hannah Rose Kirk and Vidhisha Balachandran and Sachin Kumar and Yulia Tsvetkov and M. R. Leiser and Saif Mohammad},
+      year={2023},
+      eprint={2303.18190},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@misc{eleti2023function,
+  author = {Eleti, Atty and Harris, Jeff and Kilpatrick, Logan},
+  title = {Function calling and other API updates},
+  howpublished = {\url{https://openai.com/blog/function-calling-and-other-api-updates}},
+  year = {2023},
+  note = {Accessed: insert date here}
+}
+
+@misc{elmhamdi2023impossible,
+      title={On the Impossible Safety of Large AI Models},
+      author={El-Mahdi El-Mhamdi and Sadegh Farhadkhani and Rachid Guerraoui and Nirupam Gupta and Lê-Nguyên Hoang and Rafael Pinot and Sébastien Rouault and John Stephan},
+      year={2023},
+      eprint={2209.15259},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
+
+@misc{frye2023,
+  author = {Frye, Charles},
+  title = {It can be done! It should not be done!},
+  year = {2023},
+  howpublished = {Tweet},
+  month = {June 22},
+  url = {https://twitter.com/charles_irl/status/1671979085860601856}
+}
+
+@misc{goodside2023i,
+  author = {Goodside, Riley},
+  title = {I, too, am an AI expert. I make it say “poop.”},
+  year = {2023},
+  howpublished = {Tweet},
+  month = {June 2},
+  url = {https://twitter.com/goodside/status/1664750905588056065}
 }
 
 @article{greshake2023more,
@@ -309,8 +397,7 @@ url = {https://www.microsoft.com/en-us/research/publication/jigsaw-large-languag
   title = {Building LLM applications for production},
   year = {2023},
   month = {4},
-  howpublished = {\url{https://huyenchip.com/2023/04/11/llm-engineering.html}},
-  note = {Accessed: 2023-06-02}
+  url = {https://huyenchip.com/2023/04/11/llm-engineering.html},
 }
 
 @article{liang2023taskmatrix,
@@ -327,11 +414,37 @@ url = {https://www.microsoft.com/en-us/research/publication/jigsaw-large-languag
   year={2023}
 }
 
+@misc{karpathy2023state,
+  author = {Karpathy, Andrej},
+  title = {State of GPT},
+  howpublished = {Talk presented at Microsoft Build},
+  year = {2023},
+  note = {Available at: \url{https://www.youtube.com/watch?v=bZQun8Y4L2A}}
+}
+
 @article{kim2023language,
   title={Language models can solve computer tasks},
   author={Kim, Geunwoo and Baldi, Pierre and McAleer, Stephen},
   journal={arXiv preprint arXiv:2303.17491},
   year={2023}
+}
+
+@misc{kucharavy2023fundamentals,
+      title={Fundamentals of Generative Large Language Models and Perspectives in Cyber-Defense},
+      author={Andrei Kucharavy and Zachary Schillaci and Loïc Maréchal and Maxime Würsch and Ljiljana Dolamic and Remi Sabonnadiere and Dimitri Percia David and Alain Mermoud and Vincent Lenders},
+      year={2023},
+      eprint={2303.12132},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@misc{liu2023prompt,
+      title={Prompt Injection attack against LLM-integrated Applications},
+      author={Yi Liu and Gelei Deng and Yuekang Li and Kailong Wang and Tianwei Zhang and Yepang Liu and Haoyu Wang and Yan Zheng and Yang Liu},
+      year={2023},
+      eprint={2306.05499},
+      archivePrefix={arXiv},
+      primaryClass={cs.CR}
 }
 
 @article{lu2023bounding,
@@ -348,11 +461,79 @@ url = {https://www.microsoft.com/en-us/research/publication/jigsaw-large-languag
   year={2023}
 }
 
+@misc{microsoft2023introduction,
+  author = {Microsoft},
+  title = {Introduction to red teaming large language models (LLMs)},
+  url = {https://learn.microsoft.com/en-us/azure/cognitive-services/openai/concepts/red-teaming},
+  publisher = {Microsoft Learn},
+  year = {2023}
+}
+
+@misc{nin_kat2023new,
+    author = {Nin_kat},
+    title = {New jailbreak based on virtual functions - smuggle illegal tokens to the backend},
+    year = {2023},
+    url = {https://www.reddit.com/r/ChatGPT/comments/10urbdj/new_jailbreak_based_on_virtual_functions_smuggle},
+}
+
+@misc{nvidia2023enables,
+  author = {NVIDIA},
+  title = {NVIDIA Enables Trustworthy, Safe, and Secure Large Language Model Conversational Systems},
+  url = {https://developer.nvidia.com/blog/nvidia-enables-trustworthy-safe-and-secure-large-language-model-conversational-systems/},
+  publisher = {NVIDIA Developer},
+  year = {2023}
+}
+
+@misc{nvidia2023redteam,
+  title = {NVIDIA AI Red Team: An Introduction},
+  author = {Pearce, Will and Lucas, Joseph},
+  year = {2023},
+  url = {https://developer.nvidia.com/blog/nvidia-ai-red-team-an-introduction/},
+}
+
+@misc{openai_cookbook_2023,
+  author = {OpenAI},
+  title = {OpenAI Cookbook: Techniques to Improve Reliability},
+  year = {2023},
+  url = {https://github.com/openai/openai-cookbook/blob/main/techniques_to_improve_reliability.md},
+}
+
+@misc{openai2023gpt4,
+      title={GPT-4 Technical Report},
+      author={OpenAI},
+      year={2023},
+      eprint={2303.08774},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
+@misc{osika2023gpt,
+  author = {Anton Osika},
+  title = {GPT Engineer},
+  year = {2023},
+  url = {https://github.com/AntonOsika/gpt-engineer},
+}
+
+@misc{owasp2023llm,
+  author = {OWASP},
+  title = {OWASP Top 10 List for Large Language Models version 0.1},
+  url = {https://owasp.org/www-project-top-10-for-large-language-model-applications/descriptions/},
+  publisher = {OWASP},
+  year = {2023}
+}
+
 @article{paranjape2023art,
   title={ART: Automatic multi-step reasoning and tool-use for large language models},
   author={Paranjape, Bhargavi and Lundberg, Scott and Singh, Sameer and Hajishirzi, Hannaneh and Zettlemoyer, Luke and Ribeiro, Marco Tulio},
   journal={arXiv preprint arXiv:2303.09014},
   year={2023}
+}
+
+@inproceedings{park2023generative,
+title	= {Generative Agents: Interactive Simulacra of Human Behavior},
+author	= {Joon Sung Park and Joseph C. O'Brien and Carrie Cai and Meredith Ringel Morris and Percy Liang and Michael Bernstein},
+year	= {2023},
+URL	= {https://arxiv.org/pdf/2304.03442.pdf}
 }
 
 @article{patil2023gorilla,
@@ -376,11 +557,52 @@ url = {https://www.microsoft.com/en-us/research/publication/jigsaw-large-languag
   year={2023}
 }
 
+@misc{shrivastava2023repofusion,
+      title={RepoFusion: Training Code Models to Understand Your Repository}, 
+      author={Disha Shrivastava and Denis Kocetkov and Harm de Vries and Dzmitry Bahdanau and Torsten Scholak},
+      year={2023},
+      eprint={2306.10998},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
+
+@misc{significant-gravitas2023auto-gpt,
+  author = {Significant-Gravitas},
+  title = {Auto-GPT: An experimental open-source attempt to make GPT-4 fully autonomous},
+  year = {2023},
+  url = {https://github.com/Significant-Gravitas/Auto-GPT}
+}
+
+@misc{wang2023adversarial,
+      title={Adversarial Demonstration Attacks on Large Language Models},
+      author={Jiongxiao Wang and Zichen Liu and Keun Hee Park and Muhao Chen and Chaowei Xiao},
+      year={2023},
+      eprint={2305.14950},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+
 @article{wang2023voyager,
   title={Voyager: An Open-Ended Embodied Agent with Large Language Models},
   author={Wang, Guanzhi and Xie, Yuqi and Jiang, Yunfan and Mandlekar, Ajay and Xiao, Chaowei and Zhu, Yuke and Fan, Linxi and Anandkumar, Anima},
   journal={arXiv preprint arXiv:2305.16291},
   year={2023}
+}
+
+@misc{willison2023dual,
+  author = {Simon Willison},
+  title = {The Dual LLM pattern for building AI assistants that can resist prompt injection},
+  year = {2023},
+  url = {https://simonwillison.net/2023/Apr/25/dual-llm-pattern/}
+}
+
+@misc{xu2023instructions,
+      title={Instructions as Backdoors: Backdoor Vulnerabilities of Instruction Tuning for Large Language Models},
+      author={Jiashu Xu and Mingyu Derek Ma and Fei Wang and Chaowei Xiao and Muhao Chen},
+      year={2023},
+      eprint={2305.14710},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
 }
 
 @article{yao2023tree,
@@ -390,52 +612,74 @@ url = {https://www.microsoft.com/en-us/research/publication/jigsaw-large-languag
   year={2023}
 }
 
-@inproceedings{52294,
-title	= {Generative Agents: Interactive Simulacra of Human Behavior},
-author	= {Joon Sung Park and Joseph C. O'Brien and Carrie Cai and Meredith Ringel Morris and Percy Liang and Michael Bernstein},
-year	= {2023},
-URL	= {https://arxiv.org/pdf/2304.03442.pdf}
-}
 
-@misc{goodside_2023,
-  author = {Goodside, Riley},
-  title = {I, too, am an AI expert. I make it say “poop.”},
-  year = {2023},
-  howpublished = {Tweet},
-  month = {June 2},
-  url = {https://twitter.com/goodside/status/1664750905588056065}
-}
+%%% ML OpSec
 
-@misc{karpathy2023state,
-  author = {Karpathy, Andrej},
-  title = {State of GPT},
-  howpublished = {Talk presented at Microsoft Build},
-  year = {2023},
-  note = {Available at: \url{https://www.youtube.com/watch?v=bZQun8Y4L2A}}
-}
-
-@misc{Nin_kat2023,
-    author = "Nin_kat",
-    title = "New jailbreak based on virtual functions - smuggle illegal tokens to the backend",
-    year = "2023",
-    url = "https://www.reddit.com/r/ChatGPT/comments/10urbdj/new_jailbreak_based_on_virtual_functions_smuggle",
-    note = "Accessed: Jun 8, 2023",
-    howpublished = "\url{https://www.reddit.com/r/ChatGPT/comments/10urbdj/new_jailbreak_based_on_virtual_functions_smuggle}"
-}
-
-@misc{openai_cookbook_2023,
-  author = {OpenAI},
-  title = {OpenAI Cookbook: Techniques to Improve Reliability},
-  year = {2023},
-  url = {https://github.com/openai/openai-cookbook/blob/main/techniques_to_improve_reliability.md},
-  note = {Accessed: June 2, 2023}
-}
-
-@misc{openai2023gpt4,
-      title={GPT-4 Technical Report}, 
-      author={OpenAI},
-      year={2023},
-      eprint={2303.08774},
+@misc{papernot2016science,
+      title={Towards the Science of Security and Privacy in Machine Learning},
+      author={Nicolas Papernot and Patrick McDaniel and Arunesh Sinha and Michael Wellman},
+      year={2016},
+      eprint={1611.03814},
       archivePrefix={arXiv},
-      primaryClass={cs.CL}
+      primaryClass={cs.CR}
+}
+
+@inproceedings{Abadi_2017,
+	doi = {10.1109/csf.2017.10},
+	url = {https://doi.org/10.1109%2Fcsf.2017.10},
+	year = 2017,
+	month = {aug},
+	publisher = {{IEEE}},
+	author = {Martin Abadi and Ulfar Erlingsson and Ian Goodfellow and H. Brendan McMahan and Ilya Mironov and Nicolas Papernot and Kunal Talwar and Li Zhang},
+	title = {On the Protection of Private Information in Machine Learning Systems: Two Recent Approches},
+	booktitle = {2017 {IEEE} 30th Computer Security Foundations Symposium ({CSF})}
+}
+
+@misc{papernot2018marauders,
+      title={A Marauder's Map of Security and Privacy in Machine Learning},
+      author={Nicolas Papernot},
+      year={2018},
+      eprint={1811.01134},
+      archivePrefix={arXiv},
+      primaryClass={cs.CR}
+}
+
+@misc{arp2021dos,
+      title={Dos and Don'ts of Machine Learning in Computer Security},
+      author={Daniel Arp and Erwin Quiring and Feargus Pendlebury and Alexander Warnecke and Fabio Pierazzi and Christian Wressnegger and Lorenzo Cavallaro and Konrad Rieck},
+      year={2021},
+      eprint={2010.09470},
+      archivePrefix={arXiv},
+      primaryClass={cs.CR}
+}
+
+@misc{apruzzese2022real,
+      title={"Real Attackers Don't Compute Gradients": Bridging the Gap Between Adversarial ML Research and Practice},
+      author={Giovanni Apruzzese and Hyrum S. Anderson and Savino Dambra and David Freeman and Fabio Pierazzi and Kevin A. Roundy},
+      year={2022},
+      eprint={2212.14315},
+      archivePrefix={arXiv},
+      primaryClass={cs.CR}
+}
+
+@misc{klondike2023threat,
+  author = {Gavin Klondike},
+  title = {Threat Modeling LLM Applications},
+  year = {2023},
+  url = {http://aivillage.org/large%20language%20models/threat-modeling-llm/},
+  publisher = {AI Village}
+}
+
+@misc{lanyado2023can,
+  author = {Bar Lanyado},
+  title = {Can you trust ChatGPT’s package recommendations?},
+  year = {2023},
+  url = {https://vulcan.io/blog/ai-hallucinations-package-risk}
+}
+
+@misc{bornstein2023emerging,
+  author = {Matt Bornstein},
+  title = {Emerging Architectures for LLM Applications},
+  year = {2023},
+  url = {https://a16z.com/2023/06/20/emerging-architectures-for-llm-applications/}
 }

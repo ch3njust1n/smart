@@ -68,17 +68,10 @@ def generate_attribute(
                         has_cached_code = ""
 
                         if database:
-                            query = str(
-                                {
-                                    "function_name": func_name,
-                                    "args": args,
-                                    "kwargs": kwargs,
-                                }
-                            )
-                            has_cached_code = database.contains(query)
+                            has_cached_code = database.contains(func_name)
 
                             if has_cached_code:
-                                return database.get(query)
+                                return database.get(func_name)["generated_code"]
 
                         # If model is specified and callable, use it to generate the output string
                         if not has_cached_code and model is not None:
@@ -110,12 +103,11 @@ def generate_attribute(
                             if database:
                                 try:
                                     capability = {
-                                        "function_name": func_name,
                                         "args": args,
                                         "kwargs": kwargs,
                                         "generated_code": func_source,
                                     }
-                                    database.set(capability)
+                                    database.set(func_name, capability)
                                 except Exception as e:
                                     raise DatabaseException(
                                         "An error occurred while adding to the database"
