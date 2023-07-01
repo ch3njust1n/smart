@@ -23,6 +23,10 @@ jobs:
         python setup.py install
         pip install -e .[dev]
 
+    - name: Install dependencies from requirements.txt
+      run: |
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
     - name: Check code formatting with Black
       run: |
         black --check .
