@@ -10,6 +10,7 @@ setup(
         "openai>=0.27.7",
         "python-dotenv>=1.0.0",
         "RestrictedPython>=6.0",
+        "urllib3<2.0",
     ],
     extras_require={
         "dev": [
