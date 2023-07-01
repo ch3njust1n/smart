@@ -5,7 +5,8 @@ User-defined functions that generate code using LLM.
 import os
 import openai
 import anthropic
-import google.generativeai as palm
+
+# import google.generativeai as palm
 from dotenv import load_dotenv
 
 from generative.metaclasses import AbstractGenerativeModel
@@ -108,8 +109,7 @@ class Claude(AbstractGenerativeModel):
 
         return llm_code["completion"]
 
-
-class Palm(AbstractGenerativeModel):
+    # class Palm(AbstractGenerativeModel):
     """
     PaLM API wrapper
 
@@ -120,22 +120,22 @@ class Palm(AbstractGenerativeModel):
         Source code of the generated function.
     """
 
-    @classmethod
-    def generate(cls, prompt: str) -> str:
-        api_key = os.getenv("GOOGLE_API_KEY")
-        palm.configure(api_key=api_key)
+    # @classmethod
+    # def generate(cls, prompt: str) -> str:
+    # api_key = os.getenv("GOOGLE_API_KEY")
+    # palm.configure(api_key=api_key)
 
-        if api_key is None:
-            raise ValueError(
-                "The GOOGLE_API_KEY environment variable is not set. Please provide your GOOGLE API key."
-            )
+    # if api_key is None:
+    #     raise ValueError(
+    #         "The GOOGLE_API_KEY environment variable is not set. Please provide your GOOGLE API key."
+    #     )
 
-        llm_code = palm.generate_text(
-            model=os.getenv("GOOGLE_MODEL"),
-            prompt=prompt,
-            temperature=float(os.getenv("TEMPERATURE", 0.7)),
-            # The maximum length of the response
-            max_output_tokens=int(os.getenv("MAX_TOKENS", 1000)),
-        )
+    # llm_code = palm.generate_text(
+    #     model=os.getenv("GOOGLE_MODEL"),
+    #     prompt=prompt,
+    #     temperature=float(os.getenv("TEMPERATURE", 0.7)),
+    #     # The maximum length of the response
+    #     max_output_tokens=int(os.getenv("MAX_TOKENS", 1000)),
+    # )
 
-        return llm_code.result
+    # return llm_code.result
