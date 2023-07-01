@@ -37,8 +37,10 @@ jobs:
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
         OPENAI_MODEL: text-davinci-003
         OPENAI_MODEL_GPT4: gpt-4
         ANTHROPIC_MODEL: claude-instant-v1
+        GOOGLE_MODEL: models/text-bison-001
         TEMPERATURE: 0.7
         MAX_TOKENS: 3600
