@@ -8,6 +8,7 @@ setup(
         "anthropic>=0.2.9",
         "google-generativeai>=0.1.0",
         "openai>=0.27.7",
+        "protobuf>=3.17.3",
         "python-dotenv>=1.0.0",
         "RestrictedPython>=6.0",
         "urllib3<2.0",
