@@ -4,7 +4,7 @@ User-defined functions that generate code using LLM.
 
 import os
 import openai
-import anthropic
+from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
 
 # import google.generativeai as palm
 from dotenv import load_dotenv
@@ -68,7 +68,7 @@ class GPT3(AbstractGenerativeModel):
                 "The OPENAI_API_KEY environment variable is not set. Please provide your OpenAI API key."
             )
 
-        llm_code = openai.Completion.create(
+        llm_code = openai.ChatCompletion.create(
             model=os.getenv("OPENAI_MODEL"),
             prompt=prompt,
             temperature=float(os.getenv("TEMPERATURE", 0.7)),
@@ -92,22 +92,23 @@ class Claude(AbstractGenerativeModel):
     @classmethod
     def generate(cls, prompt: str) -> str:
         api_key = os.getenv("ANTHROPIC_API_KEY")
-        c = anthropic.Client(api_key)
 
         if api_key is None:
             raise ValueError(
                 "The ANTHROPIC_API_KEY environment variable is not set. Please provide your ANTHROPIC API key."
             )
 
-        llm_code = c.completion(
-            prompt=f"{anthropic.HUMAN_PROMPT} {prompt}{anthropic.AI_PROMPT}",
-            stop_sequences=[anthropic.HUMAN_PROMPT],
+        model = Anthropic()
+
+        llm_code = model.completions.create(
+            prompt=f"{HUMAN_PROMPT} {prompt}{AI_PROMPT}",
+            stop_sequences=[HUMAN_PROMPT],
             model=os.getenv("ANTHROPIC_MODEL"),
             temperature=float(os.getenv("TEMPERATURE", 0.7)),
             max_tokens_to_sample=int(os.getenv("MAX_TOKENS", 3600)),
         )
 
-        return llm_code["completion"]
+        return llm_code.completion
 
     # class Palm(AbstractGenerativeModel):
     """

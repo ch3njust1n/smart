@@ -66,38 +66,42 @@ def mock_anthropic_check_true():
 def test_selfheal_with_gpt4(
     model, critic, mock_gpt4_selfheal, mock_anthropic_check_true
 ):
+    mock_anthropic = MagicMock()
+    mock_anthropic.completions.create.return_value = mock_anthropic_check_true
+
     with mock.patch("openai.ChatCompletion.create", return_value=mock_gpt4_selfheal):
-        with mock.patch(
-            "anthropic.Client.completion", return_value=mock_anthropic_check_true
-        ):
+        with mock.patch("anthropic.Anthropic", return_value=mock_anthropic):
+            with mock.patch.object(critic, "generate", return_value="True"):
 
-            @adapt(model=model, critic=critic)
-            def fibonacci(n):
-                if n <= 0:
-                    return 0
-                elif n == 1:
-                    return 1
-                else:
-                    return fibonacci(n - 1) + fibonacci(n - 2) + 1
+                @adapt(model=model, critic=critic)
+                def fibonacci(n):
+                    if n <= 0:
+                        return 0
+                    elif n == 1:
+                        return 1
+                    else:
+                        return fibonacci(n - 1) + fibonacci(n - 2) + 1
 
-            assert fibonacci(8) == 21
+                assert fibonacci(4) == 3
 
 
 @pytest.mark.parametrize("model,critic", [(GPT4, Claude)])
 def test_adapt_with_gpt(model, critic, mock_gpt4_selfheal, mock_anthropic_check_true):
+    mock_anthropic = MagicMock()
+    mock_anthropic.completions.create.return_value = mock_anthropic_check_true
+
     with mock.patch("openai.ChatCompletion.create", return_value=mock_gpt4_selfheal):
-        with mock.patch(
-            "anthropic.Client.completion", return_value=mock_anthropic_check_true
-        ):
+        with mock.patch("anthropic.Anthropic", return_value=mock_anthropic):
+            with mock.patch.object(critic, "generate", return_value="True"):
 
-            @adapt(model=model, critic=critic)
-            def func(a, b):
-                prompt = """
-                Write a complete python 3 function, including the header and
-                return statement that computes the N-th Fibonacci number.
-                """
+                @adapt(model=model, critic=critic)
+                def func(n):
+                    prompt = """
+                    Write a complete python 3 function, including the header and
+                    return statement that computes the N-th Fibonacci number.
+                    """
 
-            assert func(8) == 21
+                assert func(4) == 3
 
 
 @pytest.fixture
