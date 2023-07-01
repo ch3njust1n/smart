@@ -42,3 +42,6 @@ jobs:
         ANTHROPIC_MODEL: claude-instant-v1
         TEMPERATURE: 0.7
         MAX_TOKENS: 3600
+
+    - name: OSSF Scorecard action
+      uses: ossf/scorecard-action@v2.2.0

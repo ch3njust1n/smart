@@ -1,6 +1,7 @@
 import json
 import redis
 import pytest
+import unittest.mock as mock
 from unittest.mock import Mock, MagicMock, patch
 from typing import Any, Dict, List
 
@@ -77,22 +78,24 @@ def mock_vector_db():
 def test_selfheal_with_gpt4(
     model, critic, mock_gpt4_selfheal, mock_anthropic_check_true, mock_vector_db
 ):
+    mock_anthropic = MagicMock()
+    mock_anthropic.completions.create.return_value = mock_anthropic_check_true
+
     with patch("openai.ChatCompletion.create", return_value=mock_gpt4_selfheal):
-        with patch(
-            "anthropic.Client.completion", return_value=mock_anthropic_check_true
-        ):
+        with patch("anthropic.Anthropic", return_value=mock_anthropic):
+            with mock.patch.object(critic, "generate", return_value="True"):
 
-            @adapt(model=model, critic=critic, database=mock_vector_db)
-            def fibonacci(n):
-                if n <= 0:
-                    return 0
-                elif n == 1:
-                    return 1
-                else:
-                    return fibonacci(n - 1) + fibonacci(n - 2) + 1
+                @adapt(model=model, critic=critic, database=mock_vector_db)
+                def fibonacci(n):
+                    if n <= 0:
+                        return 0
+                    elif n == 1:
+                        return 1
+                    else:
+                        return fibonacci(n - 1) + fibonacci(n - 2) + 1
 
-            assert fibonacci(8) == 21
+                assert fibonacci(8) == 21
 
-            # Now, we'll assert that the mock Redis was interacted with as expected.
-            mock_vector_db.contains.assert_called_once()
-            mock_vector_db.set.assert_called_once()
+                # Now, we'll assert that the mock Redis was interacted with as expected.
+                mock_vector_db.contains.assert_called_once()
+                mock_vector_db.set.assert_called_once()
