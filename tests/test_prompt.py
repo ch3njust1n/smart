@@ -87,7 +87,7 @@ def test_incorrect_zerodivisionerror(mock_anthropic_check_true):
     mock_anthropic = MagicMock()
     mock_anthropic.completions.create.return_value = mock_anthropic_check_true
     with mock.patch("anthropic.Anthropic", return_value=mock_anthropic):
-        with mock.patch.object(claude, "generate", return_value="False"):
+        with mock.patch.object(claude, "generate", return_value="True"):
             code = """
             try:
                 x = 5 / 0
