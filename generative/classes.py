@@ -14,7 +14,10 @@ from .metaclasses import (
     DatabaseException,
     AbstractGenerativeModel,
 )
-from .prompt import format_generative_function_from_input
+
+from .utils import format_binary_output
+
+from .prompt import format_generative_function_from_input, format_semantic_checker
 
 """
 A decorator that allows for dynamic generation and execution of class attributes.
@@ -46,8 +49,8 @@ Raises:
 
 
 def generate_attribute(
-    model: Optional[AbstractGenerativeModel],
-    critic: Optional[AbstractGenerativeModel],
+    model: AbstractGenerativeModel,
+    critic: Optional[AbstractGenerativeModel] = None,
     database: Optional[AbstractDatabase] = None,
 ) -> Callable[[Type[Any]], Type[Any]]:
     def decorator(cls: Type[Any]) -> Type[Any]:
@@ -102,6 +105,18 @@ def generate_attribute(
                                 raise SyntaxError("Invalid syntax")
 
                             if is_incomplete_code(func_source):
+                                raise exception
+
+                            is_semantically_correct = False
+
+                            if critic:
+                                prompt = format_semantic_checker(
+                                    func_source, input="", context=""
+                                )
+                                output = critic.generate(prompt)
+                                is_semantically_correct = format_binary_output(output)
+
+                            if not is_semantically_correct:
                                 raise exception
 
                             if database:

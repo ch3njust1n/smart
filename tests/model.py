@@ -110,6 +110,7 @@ class Claude(AbstractGenerativeModel):
 
         return llm_code.completion
 
+
 class Palm(AbstractGenerativeModel):
     """
     PaLM API wrapper
