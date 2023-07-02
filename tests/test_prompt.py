@@ -94,8 +94,7 @@ def test_incorrect_zerodivisionerror(mock_anthropic_check_true):
             except ZeroDivisionError:
                 x = 0
             """
-
-            claude = Claude()
+            
             prompt = format_semantic_checker(code, input, context="")
             output = claude.generate(prompt)
             output = format_binary_output(output)
