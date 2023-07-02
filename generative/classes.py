@@ -36,8 +36,9 @@ Note: The generated function does not accept any arguments, as it's called immed
 defined.
 
 Args:
-    model: A function that takes a string prompt and returns a string of Python code.
-    database: An instance of a class that implements the AbstractDatabase interface.
+    model (AbstractGenerativeModel): A function that takes a string prompt and returns a string of Python code.
+    critic (AbstractGenerativeModel, optional): LLM to review generated code from `model`.
+    database (AbstractDatabase, optional): An instance of a class that implements the AbstractDatabase interface.
 
 Returns:
     A class decorator that can be used to decorate a class, with the added capability of dynamically
