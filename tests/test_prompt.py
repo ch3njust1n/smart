@@ -82,12 +82,12 @@ def test_incorrect_valueerror(mock_anthropic_check_false):
             assert output == False
 
 
-def test_incorrect_zerodivisionerror(mock_anthropic_check_true):
+def test_incorrect_zerodivisionerror(mock_anthropic_check_false):
     claude = Claude()
     mock_anthropic = MagicMock()
-    mock_anthropic.completions.create.return_value = mock_anthropic_check_true
+    mock_anthropic.completions.create.return_value = mock_anthropic_check_false
     with mock.patch("anthropic.Anthropic", return_value=mock_anthropic):
-        with mock.patch.object(claude, "generate", return_value="True"):
+        with mock.patch.object(claude, "generate", return_value="False"):
             code = """
             try:
                 x = 5 / 0
@@ -95,12 +95,11 @@ def test_incorrect_zerodivisionerror(mock_anthropic_check_true):
                 x = 0
             """
 
-            claude = Claude()
             prompt = format_semantic_checker(code, input, context="")
             output = claude.generate(prompt)
             output = format_binary_output(output)
 
-            assert output
+            assert output == False
 
 
 def test_incorrect_io_with(mock_anthropic_check_false):
