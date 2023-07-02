@@ -1,6 +1,6 @@
 from model import (
-    # Palm, 
-    Claude
+    # Palm,
+    Claude,
 )
 from generative.prompt import format_semantic_checker
 from generative.utils import format_binary_output
