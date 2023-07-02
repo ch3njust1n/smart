@@ -47,6 +47,7 @@ Raises:
 
 def generate_attribute(
     model: Optional[AbstractGenerativeModel],
+    critic: Optional[AbstractGenerativeModel],
     database: Optional[AbstractDatabase] = None,
 ) -> Callable[[Type[Any]], Type[Any]]:
     def decorator(cls: Type[Any]) -> Type[Any]:
@@ -93,6 +94,9 @@ def generate_attribute(
                                 func_name, kwargs, context=available_funcs
                             )
                             func_source = clean_function(model.generate(prompt))
+
+                            if not func_source:
+                                raise exception
 
                             if not is_valid_syntax(func_source):
                                 raise SyntaxError("Invalid syntax")
