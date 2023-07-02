@@ -14,7 +14,10 @@ from .metaclasses import (
     DatabaseException,
     AbstractGenerativeModel,
 )
-from .prompt import format_generative_function_from_input
+
+from .utils import format_binary_output
+
+from .prompt import format_generative_function_from_input, format_semantic_checker
 
 """
 A decorator that allows for dynamic generation and execution of class attributes.
@@ -33,8 +36,11 @@ Note: The generated function does not accept any arguments, as it's called immed
 defined.
 
 Args:
-    model: A function that takes a string prompt and returns a string of Python code.
-    database: An instance of a class that implements the AbstractDatabase interface.
+    model (AbstractGenerativeModel): A function that takes a string prompt and returns a string of
+        Python code.
+    critic (AbstractGenerativeModel, optional): LLM to review generated code from `model`.
+    database (AbstractDatabase, optional): An instance of a class that implements the
+        AbstractDatabase interface.
 
 Returns:
     A class decorator that can be used to decorate a class, with the added capability of dynamically
@@ -46,7 +52,8 @@ Raises:
 
 
 def generate_attribute(
-    model: Optional[AbstractGenerativeModel],
+    model: AbstractGenerativeModel,
+    critic: Optional[AbstractGenerativeModel] = None,
     database: Optional[AbstractDatabase] = None,
 ) -> Callable[[Type[Any]], Type[Any]]:
     def decorator(cls: Type[Any]) -> Type[Any]:
@@ -94,10 +101,25 @@ def generate_attribute(
                             )
                             func_source = clean_function(model.generate(prompt))
 
+                            if not func_source:
+                                raise exception
+
                             if not is_valid_syntax(func_source):
                                 raise SyntaxError("Invalid syntax")
 
                             if is_incomplete_code(func_source):
+                                raise exception
+
+                            is_semantically_correct = False
+
+                            if critic:
+                                prompt = format_semantic_checker(
+                                    func_source, input="", context=""
+                                )
+                                output = critic.generate(prompt)
+                                is_semantically_correct = format_binary_output(output)
+
+                            if not is_semantically_correct:
                                 raise exception
 
                             if database:

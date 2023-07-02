@@ -1,7 +1,7 @@
 import pytest
 import unittest.mock as mock
-from unittest.mock import Mock
-from .model import GPT4
+from unittest.mock import Mock, MagicMock
+from .model import GPT4, Claude
 from generative.classes import generate_attribute
 
 
@@ -61,30 +61,37 @@ def mock_gpt4_generate_attributes():
     return response
 
 
-def test_imagined_action_with_gpt(model_resp, mock_gpt4_generate_attributes):
+@pytest.mark.parametrize("model,critic", [(GPT4, Claude)])
+def test_imagined_action_with_gpt(
+    model, critic, model_resp, mock_gpt4_generate_attributes
+):
+    mock_anthropic = MagicMock()
+
     with mock.patch(
         "openai.ChatCompletion.create", return_value=mock_gpt4_generate_attributes
     ):
+        with mock.patch("anthropic.Anthropic", return_value=mock_anthropic):
+            with mock.patch.object(critic, "generate", return_value="True"):
 
-        @generate_attribute(model=GPT4)
-        class Mobile(object):
-            def __init__(self):
-                pass
+                @generate_attribute(model=model, critic=critic)
+                class Mobile(object):
+                    def __init__(self):
+                        pass
 
-            def phone(self):
-                pass
+                    def phone(self):
+                        pass
 
-            def wifi(self):
-                pass
+                    def wifi(self):
+                        pass
 
-        mobile = Mobile()
+                mobile = Mobile()
 
-        for action in model_resp["actions"]:
-            func_name = action["action"]
-            kwarg = {action["parameter"]: str(action["commands"])}
-            try:
-                res = getattr(mobile, func_name)(**kwarg)
-                assert res != None
-                break
-            except AttributeError:
-                assert False
+                for action in model_resp["actions"]:
+                    func_name = action["action"]
+                    kwarg = {action["parameter"]: str(action["commands"])}
+                    try:
+                        res = getattr(mobile, func_name)(**kwarg)
+                        assert res != None
+                        break
+                    except AttributeError:
+                        assert False

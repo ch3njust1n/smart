@@ -110,33 +110,34 @@ class Claude(AbstractGenerativeModel):
 
         return llm_code.completion
 
-    # class Palm(AbstractGenerativeModel):
-    """
-    PaLM API wrapper
 
-    Args:
-        prompt (string): The source code as context for function to replace.
+# class Palm(AbstractGenerativeModel):
+#     """
+#     PaLM API wrapper
 
-    Returns:
-        Source code of the generated function.
-    """
+#     Args:
+#         prompt (string): The source code as context for function to replace.
 
-    # @classmethod
-    # def generate(cls, prompt: str) -> str:
-    # api_key = os.getenv("GOOGLE_API_KEY")
-    # palm.configure(api_key=api_key)
+#     Returns:
+#         Source code of the generated function.
+#     """
 
-    # if api_key is None:
-    #     raise ValueError(
-    #         "The GOOGLE_API_KEY environment variable is not set. Please provide your GOOGLE API key."
-    #     )
+#     @classmethod
+#     def generate(cls, prompt: str) -> str:
+#         api_key = os.getenv("GOOGLE_API_KEY")
+#         palm.configure(api_key=api_key)
 
-    # llm_code = palm.generate_text(
-    #     model=os.getenv("GOOGLE_MODEL"),
-    #     prompt=prompt,
-    #     temperature=float(os.getenv("TEMPERATURE", 0.7)),
-    #     # The maximum length of the response
-    #     max_output_tokens=int(os.getenv("MAX_TOKENS", 1000)),
-    # )
+#         if api_key is None:
+#             raise ValueError(
+#                 "The GOOGLE_API_KEY environment variable is not set. Please provide your GOOGLE API key."
+#             )
 
-    # return llm_code.result
+#         llm_code = palm.generate_text(
+#             model=os.getenv("GOOGLE_MODEL"),
+#             prompt=prompt,
+#             temperature=float(os.getenv("TEMPERATURE", 0.7)),
+#             # The maximum length of the response
+#             max_output_tokens=int(os.getenv("MAX_TOKENS", 1000)),
+#         )
+
+#         return llm_code.result
