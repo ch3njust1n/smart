@@ -43,7 +43,7 @@ Returns:
 
 
 def adapt(
-    code: str = "",
+    code: Optional[str] = "",
     model: Optional[AbstractGenerativeModel] = None,
     critic: Optional[AbstractGenerativeModel] = None,
     database: Optional[AbstractDatabase] = None,
@@ -70,10 +70,9 @@ def adapt(
                         "kwargs": kwargs,
                     }
                 )
-                has_cached_code = database.contains(query)
 
-                if has_cached_code:
-                    code = database.get(query)
+                code = database.get(query)
+                has_cached_code = code is not None
 
             if not has_cached_code and model and func_source:
                 is_semantically_correct = False
@@ -89,6 +88,9 @@ def adapt(
                 code = clean_function(model.generate(prompt))
                 print(f"code {time.time()}:\n{code}")
 
+                if not code:
+                    return func(self, *args, **kwargs)
+
                 if critic:
                     prompt = format_semantic_checker(code, input="", context="")
                     output = critic.generate(prompt)
@@ -97,7 +99,7 @@ def adapt(
                 if not is_semantically_correct:
                     return func(self, *args, **kwargs)
 
-            if code.strip() == "":
+            if not code or code.strip() == "":
                 return func(self, *args, **kwargs)
             else:
                 # TODO: sanitize given function using traditional methods and LLM
@@ -155,9 +157,11 @@ If the LLM function is absent or its code also raises an exception, the original
 re-raised, allowing for upstream error handling or user notification.
 
 Args:
-    model (AbstractGenerativeModel, optional): A model that takes a string of Python code as input
-    and returns a string of Python code as output. Typically, this would be a Language Learning
-    Model that can generate alternative implementations of the input function.
+    model (AbstractGenerativeModel): A model that takes a string of Python code as input
+        and returns a string of Python code as output. Typically, this would be a Language Learning
+        Model that can generate alternative implementations of the input function.
+    critic (AbstractGenerativeModel, optional): LLM to review generated code from `model`.
+    database (AbstractDatabase, optional): Database to store generated code from `model`.
 
 Returns:
     A function that wraps the original function, catching any exceptions that it raises, and
@@ -165,7 +169,11 @@ Returns:
 """
 
 
-def catch(model: Optional[AbstractGenerativeModel] = None) -> Callable:
+def catch(
+    model: AbstractGenerativeModel,
+    critic: Optional[AbstractGenerativeModel] = None,
+    database: Optional[AbstractDatabase] = None,
+) -> Callable:
     def extract_func_name(code: str) -> str:
         match = re.search(r"def\s+(\w+)", code)
         if match:
@@ -174,7 +182,7 @@ def catch(model: Optional[AbstractGenerativeModel] = None) -> Callable:
             raise ValueError("No function definition found in provided code.")
 
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
-        func_source: Optional[str] = None
+        func_source: str = ""
         try:
             # Get the source code of the function
             func_source = inspect.getsource(func)
@@ -182,16 +190,42 @@ def catch(model: Optional[AbstractGenerativeModel] = None) -> Callable:
             pass
 
         def wrapper(*args: Any, **kwargs: Any) -> Any:
+            code: str | None = ""
             try:
                 # Execute the original function first
                 return func(*args, **kwargs)
             except Exception:
+                func_name = extract_func_name(func_source)
+
+                if database:
+                    query = str(
+                        {
+                            "function_name": func_name,
+                            "args": args,
+                            "kwargs": kwargs,
+                        }
+                    )
+                    code = database.get(query)
+
                 # If there was an exception, and an LLM is provided, use it
                 if model and func_source:
                     prompt = format_generative_function(func_source)
                     code = clean_function(model.generate(prompt))
 
+                    if not code:
+                        raise
+
                     if code.strip() != "":
+                        is_semantically_correct = False
+
+                        if critic:
+                            prompt = format_semantic_checker(code, input="", context="")
+                            output = critic.generate(prompt)
+                            is_semantically_correct = format_binary_output(output)
+
+                            if not is_semantically_correct:
+                                raise
+
                         global_vars: Dict[str, Any] = {
                             "func_source": func_source,
                         }
