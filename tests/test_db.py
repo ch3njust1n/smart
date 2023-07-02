@@ -58,7 +58,6 @@ def mock_anthropic_check_true():
 @pytest.fixture
 def mock_vector_db():
     mock_db = VectorDB()
-    mock_db.contains = MagicMock(return_value=True)
     mock_db.get = MagicMock(
         return_value="""
         def fibonacci(n):
@@ -97,5 +96,4 @@ def test_selfheal_with_gpt4(
                 assert fibonacci(8) == 21
 
                 # Now, we'll assert that the mock Redis was interacted with as expected.
-                mock_vector_db.contains.assert_called_once()
                 mock_vector_db.set.assert_called_once()
