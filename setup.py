@@ -11,7 +11,7 @@ setup(
         "protobuf",
         "python-dotenv>=1.0.0",
         "RestrictedPython>=6.0",
-        "urllib3<2.0",
+        "urllib3<3.0",
     ],
     extras_require={
         "dev": [
