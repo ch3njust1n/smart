@@ -7,7 +7,6 @@ setup(
     install_requires=[
         "python-dotenv>=1.0.0",
         "RestrictedPython>=6.0",
-        "urllib3<2.0",
     ],
     extras_require={
         "dev": [
@@ -23,6 +22,7 @@ setup(
             "pytest-mock>=3.10.0",
             "redis>=4.5.5",
             "tox>=4.5.2",
+            "urllib3<3.0",
         ]
     },
     package_data={"generative": ["py.typed"]},
