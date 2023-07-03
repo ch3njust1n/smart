@@ -4,6 +4,7 @@ User-defined functions that generate code using LLM.
 
 import os
 import openai
+import cohere
 from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
 
 # import google.generativeai as palm
@@ -69,7 +70,7 @@ class GPT3(AbstractGenerativeModel):
             )
 
         llm_code = openai.ChatCompletion.create(
-            model=os.getenv("OPENAI_MODEL"),
+            model=os.getenv("OPENAI_MODEL_GPT3"),
             prompt=prompt,
             temperature=float(os.getenv("TEMPERATURE", 0.7)),
             max_tokens=int(os.getenv("MAX_TOKENS", 3600)),
@@ -109,6 +110,38 @@ class Claude(AbstractGenerativeModel):
         )
 
         return llm_code.completion
+
+
+class Cohere(AbstractGenerativeModel):
+    """
+    Cohere API wrapper
+
+    Args:
+        prompt (string): The source code as context for function to replace.
+
+    Returns:
+        Source code of the generated function.
+    """
+
+    @classmethod
+    def generate(cls, prompt: str) -> str:
+        api_key = os.getenv("COHERE_API_KEY")
+
+        if api_key is None:
+            raise ValueError(
+                "The COHERE_API_KEY environment variable is not set. Please provide your COHERE API key."
+            )
+
+        co = cohere.Client(api_key)
+
+        response = co.generate(
+            model=os.getenv("COHERE_MODEL"),
+            prompt=prompt,
+            max_tokens=os.getenv("MAX_TOKENS"),
+            temperature=os.getenv("TEMPERATURE"),
+        )
+
+        return response.generations[0].text
 
 
 # class Palm(AbstractGenerativeModel):
