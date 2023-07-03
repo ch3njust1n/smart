@@ -12,6 +12,7 @@ setup(
         "dev": [
             "anthropic>=0.3.2",
             "black>=3.3.0",
+            "cohere>=4.11.2",
             "flake8>=6.0.0",
             "google-generativeai>=0.1.0",
             "mypy>=1.3.0",
