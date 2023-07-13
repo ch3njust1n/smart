@@ -1,4 +1,4 @@
-# Dynamic Metaprogramming with Large Language Models
+# Self-modifying code at runtime with Large Language Models
 Metaprogramming with safe code injection from [generative APIs](https://github.com/ch3njust1n/generative-api) for adaptable software
 
 ![Tests](https://github.com/ch3njust1n/generative/actions/workflows/pull-request.yml/badge.svg)
