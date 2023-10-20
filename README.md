@@ -1,4 +1,4 @@
-# Self-Modification At RunTime (SMART): Metaprogramming with Large Language Models for Adaptable Software
+# Self-Modification At RunTime (SMART): A Framework for Metaprogramming with Large Language Models for Adaptable Software
 
 ![Tests](https://github.com/ch3njust1n/generative/actions/workflows/pull-request.yml/badge.svg)
 
